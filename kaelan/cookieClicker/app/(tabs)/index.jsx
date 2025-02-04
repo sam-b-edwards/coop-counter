@@ -1,13 +1,13 @@
 import { Text, View, StyleSheet, Pressable, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useState } from "react";
+import { React, useState } from "react"
 
 export default function Index() {
 
   const [cookies, setCookies] = useState(0)
 
   const cookieClicked = () => {
-    setCookies(cookies => cookies+1)
+    setCookies(cookies => cookies + 1);
   }
 
   return (
