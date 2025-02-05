@@ -1,8 +1,9 @@
-import { Text, View, StyleSheet, Pressable, FlatList } from "react-native";
+import { Text, View, StyleSheet, Pressable, FlatList, ImageBackground, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { fetchWeatherData } from "../api/weather";
 import { useState, useEffect } from "react";
 import Icon from '@expo/vector-icons/MaterialIcons'
+
 
 
 export default function Index() {
@@ -24,7 +25,7 @@ export default function Index() {
   }
 
   const loaded = weatherData === null ? false : true
-  console.log(loaded ? weatherData.location.country: 'api not loaded')
+  // console.log(loaded ? weatherData.location.country: 'api not loaded')
 
   const renderItem = ({item}) => (
     <View style={styles.hourlyContainer}>
@@ -34,7 +35,13 @@ export default function Index() {
     </View>
   )
 
+  // Backgrounds
+  const sunny = require('../assets/images/sunny.jpg');
+  const cloudy = require('../assets/images/cloudy.jpg');
+  const rainy = require('../assets/images/rainy.jpg');
+  const clear = require('../assets/images/clear.jpg');
   
+  const curConditon = loaded ? weatherData.current.condition.text : ''
   
 
   return (
@@ -45,19 +52,27 @@ export default function Index() {
         </SafeAreaView>
       ) : ( // if an api is fetched displays information
         <SafeAreaView style={styles.container}>
-          <View>
-            <Text style={styles.title}>Weather</Text>
-            <Text style={styles.locationTitle}>in {weatherData.location.name}</Text>
-          </View>
-          <View>
-            <Text style={styles.dateTitle}>{weatherData.forecast.forecastday[0].date}</Text>
-          </View>
-          <FlatList
-            data={weatherData.forecast.forecastday[0].hour}
-            renderItem={renderItem}
-            showsVerticalScrollIndicator={false}
-          />
-          
+          <ImageBackground 
+          source={
+            curConditon.toLowerCase().includes('sunny') ? sunny : 
+            curConditon.toLowerCase().includes('clear') ? clear : 
+            curConditon.toLowerCase().includes('rain') ? rainy : 
+            curConditon.toLowerCase().includes('cloudy') ? cloudy :
+            sunny
+          }
+            blurRadius={5} resizeMode="cover" style={styles.backgroundImage}>
+            <Text style={[styles.locationTitle, styles.topText]}>{weatherData.location.name}</Text>
+            <Text style={[styles.curTempText, styles.topText]}>{weatherData.current.temp_c}°</Text>
+            <Text style={[styles.curConditonText, styles.topText]}>{curConditon}</Text>
+            <View>
+              <Text style={[styles.dateTitle, styles.topText]}>{weatherData.forecast.forecastday[0].date}</Text>
+            </View>
+            <FlatList
+              data={weatherData.forecast.forecastday[0].hour}
+              renderItem={renderItem}
+              showsVerticalScrollIndicator={false}
+            />
+          </ImageBackground>
         </SafeAreaView>
       )}
     </>
@@ -73,12 +88,32 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginBottom: -8
   },
+  backgroundImage: {
+    flex: 1,
+    width: '100%',
+  },
   locationTitle: {
+    marginTop: 24,
+    fontSize: 36,
+  },
+  curConditonText: {
+    marginTop: -6,
     fontSize: 24,
+  },
+  curTempText: {
+    marginTop: -10,
+    fontSize: 54,
+  },
+  dateTitle: {
+    fontSize: 20,
+    marginBottom: 20,
+  },
+  topText: {
     textAlign: 'center',
     alignSelf: 'center',
-    color: '#515151',
-    marginBottom: 20,
+    color: '#fefefe',
+    textShadowRadius: 15,
+    textShadowColor: '#1f1f1f',
   },
   loadingBackground: {
     flex: 1,
@@ -98,13 +133,6 @@ const styles = StyleSheet.create({
   loopText: {
     fontSize: 24,
     color: 'red'
-  },
-  dateTitle: {
-    fontSize: 20,
-    textAlign: 'center',
-    alignSelf: 'center',
-    fontWeight: 'bold',
-    marginBottom: 20,
   },
   hourlyContainer: {
     backgroundColor: 'lightblue',
