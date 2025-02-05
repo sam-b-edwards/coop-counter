@@ -1,7 +1,8 @@
-import { Text, View, StyleSheet, Pressable } from "react-native";
+import { Text, View, StyleSheet, Pressable, FlatList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { fetchWeatherData } from "../api/weather";
 import { useState, useEffect } from "react";
+import Icon from '@expo/vector-icons/MaterialIcons'
 
 
 export default function Index() {
@@ -25,12 +26,16 @@ export default function Index() {
   const loaded = weatherData === null ? false : true
   console.log(loaded ? weatherData.location.country: 'api not loaded')
 
-  var pageData = []
-  for(let i = 1; i <= 10; i++) {
-    pageData.push(
-      <Text style={styles.loopText}>Loop number: {i}</Text>
-    )
-  }
+  const renderItem = ({item}) => (
+    <View style={styles.hourlyContainer}>
+      <Text style={styles.hourlyText}>{item.time.split(' ').pop()}</Text>
+      <Text style={styles.hourlyText}>{item.temp_c}°C</Text>
+      <Icon name='sunny' color={'gold'} size={28} style={styles.hourlyIcon} />
+    </View>
+  )
+
+  
+  
 
   return (
     <>
@@ -43,8 +48,16 @@ export default function Index() {
           <View>
             <Text style={styles.title}>Weather</Text>
             <Text style={styles.locationTitle}>in {weatherData.location.name}</Text>
-            {pageData}
           </View>
+          <View>
+            <Text style={styles.dateTitle}>{weatherData.forecast.forecastday[0].date}</Text>
+          </View>
+          <FlatList
+            data={weatherData.forecast.forecastday[0].hour}
+            renderItem={renderItem}
+            showsVerticalScrollIndicator={false}
+          />
+          
         </SafeAreaView>
       )}
     </>
@@ -64,7 +77,8 @@ const styles = StyleSheet.create({
     fontSize: 24,
     textAlign: 'center',
     alignSelf: 'center',
-    color: '#515151'
+    color: '#515151',
+    marginBottom: 20,
   },
   loadingBackground: {
     flex: 1,
@@ -84,5 +98,31 @@ const styles = StyleSheet.create({
   loopText: {
     fontSize: 24,
     color: 'red'
+  },
+  dateTitle: {
+    fontSize: 20,
+    textAlign: 'center',
+    alignSelf: 'center',
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  hourlyContainer: {
+    backgroundColor: 'lightblue',
+    marginHorizontal: 20,
+    marginBottom: 20,
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#515151',
+    borderRadius: 10
+  },
+  hourlyText: {
+    fontSize: 20,
+    marginRight: 40
+  },
+  hourlyIcon: {
+    marginLeft: 'auto'
   }
 })
