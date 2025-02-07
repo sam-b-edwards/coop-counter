@@ -2,7 +2,7 @@ import { Text, View, StyleSheet, Pressable, FlatList, ImageBackground, Image } f
 import { SafeAreaView } from "react-native-safe-area-context";
 import { fetchWeatherData } from "../api/weather";
 import { useState, useEffect } from "react";
-import Icon from '@expo/vector-icons/MaterialIcons'
+import Icon from '@expo/vector-icons/Ionicons'
 
 
 
@@ -28,10 +28,21 @@ export default function Index() {
   // console.log(loaded ? weatherData.location.country: 'api not loaded')
 
   const renderItem = ({item}) => (
-    <View style={styles.hourlyContainer}>
-      <Text style={styles.hourlyText}>{item.time.split(' ').pop()}</Text>
-      <Text style={styles.hourlyText}>{item.temp_c}°C</Text>
-      <Icon name='sunny' color={'gold'} size={28} style={styles.hourlyIcon} />
+    <View style={styles.hourlyItemContainer}>
+      <Text style={styles.hourlyItemText}>{item.time.split(' ').pop()}</Text>
+      {
+        item.condition.text.toLowerCase().includes('rain') ? 
+        <Icon name='rainy' color={'lightblue'} size={34} /> : 
+
+        item.condition.text.toLowerCase().includes('cloudy') || item.condition.text.toLowerCase().includes('overcast') ? 
+        <Icon name='cloud' color={'white'} size={34} /> : 
+
+        Number(weatherData.forecast.forecastday[0].astro.sunset.split(':')[0]) + 12 <= Number(item.time.split(' ')[1].split(':')[0]) || Number(weatherData.forecast.forecastday[0].astro.sunrise.split(':')[0]) >= Number(item.time.split(' ')[1].split(':')[0]) ? 
+        <Icon name='moon' color={'lightgrey'} size={34} /> : 
+
+        <Icon name='sunny' color={'gold'} size={34} />
+      }
+      <Text style={styles.hourlyItemText}>{item.temp_c}°</Text>
     </View>
   )
 
@@ -42,6 +53,8 @@ export default function Index() {
   const clear = require('../assets/images/clear.jpg');
   
   const curConditon = loaded ? weatherData.current.condition.text : ''
+
+  
   
 
   return (
@@ -54,24 +67,29 @@ export default function Index() {
         <SafeAreaView style={styles.container}>
           <ImageBackground 
           source={
-            curConditon.toLowerCase().includes('sunny') ? sunny : 
             curConditon.toLowerCase().includes('clear') ? clear : 
             curConditon.toLowerCase().includes('rain') ? rainy : 
-            curConditon.toLowerCase().includes('cloudy') ? cloudy :
+            curConditon.toLowerCase().includes('cloudy') || curConditon.toLowerCase().includes('overcast') ? cloudy :
             sunny
           }
             blurRadius={5} resizeMode="cover" style={styles.backgroundImage}>
             <Text style={[styles.locationTitle, styles.topText]}>{weatherData.location.name}</Text>
             <Text style={[styles.curTempText, styles.topText]}>{weatherData.current.temp_c}°</Text>
             <Text style={[styles.curConditonText, styles.topText]}>{curConditon}</Text>
-            <View>
-              <Text style={[styles.dateTitle, styles.topText]}>{weatherData.forecast.forecastday[0].date}</Text>
+
+            <View style={styles.hourlyContainer}>
+              <View style={styles.topBar}>
+                <Icon name='calendar-outline' size={18} color={'#fafafa'} style={styles.topBarIcon} />
+                <Text style={styles.topBarText}>Todays Forecast</Text>
+              </View>
+              <FlatList
+                data={weatherData.forecast.forecastday[0].hour}
+                renderItem={renderItem}
+                showsVerticalScrollIndicator={false}
+                horizontal={true}
+                style={styles.hourlyFlatList}
+              />
             </View>
-            <FlatList
-              data={weatherData.forecast.forecastday[0].hour}
-              renderItem={renderItem}
-              showsVerticalScrollIndicator={false}
-            />
           </ImageBackground>
         </SafeAreaView>
       )}
@@ -99,6 +117,7 @@ const styles = StyleSheet.create({
   curConditonText: {
     marginTop: -6,
     fontSize: 24,
+    marginBottom: 20,
   },
   curTempText: {
     marginTop: -10,
@@ -112,8 +131,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     alignSelf: 'center',
     color: '#fefefe',
-    textShadowRadius: 15,
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 10,
     textShadowColor: '#1f1f1f',
+
   },
   loadingBackground: {
     flex: 1,
@@ -134,23 +155,42 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: 'red'
   },
+  hourlyItemContainer: {
+    flex: 1,
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 16,
+    marginVertical: 10,
+  },
+  hourlyFlatList: {
+    flexGrow: 0,
+  },
+  hourlyItemText: {
+    fontSize: 20,
+    color: '#fafafa'
+  },
   hourlyContainer: {
-    backgroundColor: 'lightblue',
     marginHorizontal: 20,
-    marginBottom: 20,
+    paddingHorizontal: 10,
+    borderRadius: 10,
+    backgroundColor: '#0492C266',
+  },
+  topBar: {
     flex: 1,
     flexDirection: 'row',
-    alignItems: 'center',
-    padding: 10,
-    borderWidth: 1,
-    borderColor: '#515151',
-    borderRadius: 10
+    justifyContent: 'centre',
+    paddingTop: 10,
+    paddingBottom: 4,
+    borderBottomWidth: 1,
+    borderBottomColor: '#51515199',
   },
-  hourlyText: {
-    fontSize: 20,
-    marginRight: 40
+  topBarText: {
+    color: '#fafafa',
+    fontSize: 18
   },
-  hourlyIcon: {
-    marginLeft: 'auto'
+  topBarIcon: {
+    marginRight: 6,
+    alignSelf: 'center'
   }
 })
