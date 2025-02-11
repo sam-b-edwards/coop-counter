@@ -29,7 +29,14 @@ export default function Index() {
 
   const renderItem = ({item}) => (
     <View style={styles.hourlyItemContainer}>
-      <Text style={styles.hourlyItemText}>{item.time.split(' ').pop()}</Text>
+      <Text style={styles.hourlyItemText}>
+        {Number(item.time.split(' ')[1].split(':')[0]) < 12 ? 
+        item.time.split(' ')[1] == '00:00' ? '12 AM' :
+        Number(item.time.split(' ')[1].split(':')[0]) + ' AM' :
+        item.time.split(' ')[1] == '12:00' ? '12 PM' :
+        Number(item.time.split(' ')[1].split(':')[0])-12 + ' PM'}
+        </Text>
+
       {
         item.condition.text.toLowerCase().includes('rain') ? 
         <Icon name='rainy' color={'lightblue'} size={34} /> : 
@@ -64,15 +71,16 @@ export default function Index() {
           <Text style={styles.loadingText}>Loading...</Text>
         </SafeAreaView>
       ) : ( // if an api is fetched displays information
-        <SafeAreaView style={styles.container}>
-          <ImageBackground 
-          source={
-            curConditon.toLowerCase().includes('clear') ? clear : 
-            curConditon.toLowerCase().includes('rain') ? rainy : 
-            curConditon.toLowerCase().includes('cloudy') || curConditon.toLowerCase().includes('overcast') ? cloudy :
-            sunny
-          }
-            blurRadius={5} resizeMode="cover" style={styles.backgroundImage}>
+        
+        <ImageBackground 
+        source={
+          curConditon.toLowerCase().includes('clear') ? clear : 
+          curConditon.toLowerCase().includes('rain') ? rainy : 
+          curConditon.toLowerCase().includes('cloudy') || curConditon.toLowerCase().includes('overcast') ? cloudy :
+          sunny
+        }
+          blurRadius={5} resizeMode="cover" style={styles.backgroundImage}>
+          <SafeAreaView style={styles.container}>
             <Text style={[styles.locationTitle, styles.topText]}>{weatherData.location.name}</Text>
             <Text style={[styles.curTempText, styles.topText]}>{weatherData.current.temp_c}°</Text>
             <Text style={[styles.curConditonText, styles.topText]}>{curConditon}</Text>
@@ -85,13 +93,14 @@ export default function Index() {
               <FlatList
                 data={weatherData.forecast.forecastday[0].hour}
                 renderItem={renderItem}
-                showsVerticalScrollIndicator={false}
+                showsHorizontalScrollIndicator={false}
                 horizontal={true}
                 style={styles.hourlyFlatList}
               />
             </View>
-          </ImageBackground>
-        </SafeAreaView>
+          
+          </SafeAreaView>
+        </ImageBackground>
       )}
     </>
   );
@@ -134,6 +143,8 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 10,
     textShadowColor: '#1f1f1f',
+    padding: 10,
+    margin: -10
 
   },
   loadingBackground: {
@@ -177,13 +188,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#0492C266',
   },
   topBar: {
-    flex: 1,
     flexDirection: 'row',
     justifyContent: 'centre',
     paddingTop: 10,
     paddingBottom: 4,
     borderBottomWidth: 1,
-    borderBottomColor: '#51515199',
+    borderBottomColor: '#fefefe55'
   },
   topBarText: {
     color: '#fafafa',
