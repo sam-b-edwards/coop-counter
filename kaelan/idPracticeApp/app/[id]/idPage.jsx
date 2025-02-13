@@ -7,13 +7,13 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 const idPage = () => {
   const { id } = useLocalSearchParams()
 
-    if (userInfo[id-1] == null) {
+    if (userInfo[id] == null) {
       return <Redirect replace href='../..' />
     } else {
       const dynamicStyles = StyleSheet.create({
         pageContainer: {
           flex: 1,
-          backgroundColor: userInfo[id-1].favoriteColor,
+          backgroundColor: userInfo[id].favoriteColor,
           alignItems: 'center',
           padding: 20,
         },
@@ -21,11 +21,11 @@ const idPage = () => {
     return (
       <SafeAreaView style={dynamicStyles.pageContainer}>
         <View style={styles.userInfoContainer}>
-          <Text style={[styles.userTitle, styles.text]}>Welcome {userInfo[id-1].name}!</Text>
-          <Text style={[styles.text, styles.userText]}>- You're favorite color is <Text style={styles.bold}>{userInfo[id-1].favoriteColor}</Text></Text>
-          <Text style={[styles.text, styles.userText]}>- You're favorite animal is a <Text style={styles.bold}>{userInfo[id-1].favoriteAnimal}</Text></Text>
-          <Text style={[styles.text, styles.userText]}>- And you are <Text style={styles.bold}>{userInfo[id-1].age}</Text> years old</Text>
-          <Text style={[styles.text, styles.userText]}>You're new password should be <Text style={styles.bold}>{userInfo[id-1].favoriteColor}{userInfo[id-1].favoriteAnimal}{userInfo[id-1].age}</Text></Text>
+          <Text style={[styles.userTitle, styles.text]}>Welcome {userInfo[id].name}!</Text>
+          <Text style={[styles.text, styles.userText]}>- You're favorite color is <Text style={styles.bold}>{userInfo[id].favoriteColor}</Text></Text>
+          <Text style={[styles.text, styles.userText]}>- You're favorite animal is a <Text style={styles.bold}>{userInfo[id].favoriteAnimal}</Text></Text>
+          <Text style={[styles.text, styles.userText]}>- And you are <Text style={styles.bold}>{userInfo[id].age}</Text> years old</Text>
+          <Text style={[styles.text, styles.userText]}>You're new password should be <Text style={styles.bold}>{userInfo[id].favoriteColor}{userInfo[id].favoriteAnimal}{userInfo[id].age}</Text></Text>
         </View>
         <Link replace style={[styles.link, styles.userInfoContainer]} href='../..'>Go Back</Link>
       </SafeAreaView>
