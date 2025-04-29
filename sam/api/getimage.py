@@ -15,6 +15,9 @@ app = FastAPI()
 # Upload endpoint
 @app.post("/upload/")
 async def upload_image(file: UploadFile = File(...)):
+    # Check if the file is empty
+    if file.filename == "":
+        raise HTTPException(status_code=400, detail="No file provided.")
     # Basic check - only allow image types
     if not file.content_type.startswith('image/'):
         raise HTTPException(status_code=400, detail="File is not an image.")
