@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import * as PhosphorIcons from 'phosphor-react-native';
 import colors from '@/constants/colors'
 import { useRouter } from 'expo-router';
+// import Animated, { Keyframe } from 'react-native-reanimated';
 
 const index = () => {
   const router = useRouter()
