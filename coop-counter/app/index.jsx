@@ -1,29 +1,36 @@
+// Basic imports
 import { StyleSheet, Text, View, Pressable, Image } from 'react-native'
 import React, { useState } from 'react'
+import { useRouter } from 'expo-router';
+// Import color pallet and icons
 import * as PhosphorIcons from 'phosphor-react-native';
 import colors from '@/constants/colors'
-import { useRouter } from 'expo-router';
-// import Animated, { Keyframe } from 'react-native-reanimated';
 
 const index = () => {
   const router = useRouter()
+  // Variables for dashboard display and interractions
   var count = 14
   var maxCount = 24
   var certainty = 98
   var lastScan = 'Today at 9:30 AM'
+  var lastScanImage = require('@/assets/images/cameraPlaceholder.jpg')
   const [isDoorOpen, setIsDoorOpen] = useState(true)
 
   return (
+    // Main container for dashboard (flex 1 to take up all space)
     <View style={{ backgroundColor: colors.backgroundPrimary, flex: 1 }}>
     <View>
+      {/* Chicken count display */}
       <View style={styles.countContainer}>
         <Text style={styles.countTitle}>Chickens Counted</Text>
         <View style={{ flexDirection: 'row', alignItems: 'baseline', marginTop: -10 }}>
+          {/* Count */}
           <Text style={[styles.countText, { fontSize: 86 , fontWeight: 'bold' }]}>{count}</Text>
           <Text style={[styles.countText, { fontSize: 36 , fontWeight: '600' }]}>/{maxCount}</Text>
         </View>
         <Text style={[styles.countText, { fontSize: 22, fontWeight: '600', marginTop: -15 }]}>{certainty}% Certainty</Text>
 
+        {/* Scan display + link to scan page */}
         <Text style={styles.lastScanText}>Last scan: {lastScan}</Text>
         <Pressable 
           style={styles.linkContainer}
@@ -35,12 +42,15 @@ const index = () => {
         </Pressable>
       </View>
 
+      {/* Coop view widget */}
       <View style={styles.widgetContainer}>
+        {/* Black background for overlay shadow effect */}
         <View style={[styles.widget, { backgroundColor: '#000000' }]}>
-          <Image source={require('@/assets/images/cameraPlaceholder.jpg')} style={styles.coopPreview}/>
+          <Image source={lastScanImage} style={styles.coopPreview}/>
           <View style={styles.widgetInfo}>
             <Text style={styles.widgetText}>Coop</Text>
             <View style={{ flexDirection: 'row' }}>
+              {/* widget status */}
               <PhosphorIcons.WifiHigh color={colors.backgroundPrimary} size={20} weight={'regular'} style={{ marginRight: 5 }}/>
               <PhosphorIcons.BatteryHigh color={colors.backgroundPrimary} size={20} weight={'regular'} />
             </View>
@@ -48,18 +58,23 @@ const index = () => {
         </View>
       </View>
       
+      {/* door control widget */}
       <View style={styles.widgetContainer}>
         <View style={[styles.widget, { backgroundColor: colors.ctaSecondary }]}>
+          {/* Door control switch */}
           <Pressable style={[styles.doorControl, isDoorOpen ? { backgroundColor: colors.cta } : { backgroundColor: colors.textSecondary }]}
             onPress={() => {
+              // inverses door state
               setIsDoorOpen(!isDoorOpen)
             }}>
+              {/* State text + switch side */}
             <View style={[styles.doorControlCircle, isDoorOpen ? { right: 20 } : { left: 20 }]}/>
             <Text style={[styles.doorControlText, isDoorOpen ? { marginLeft: 60 } : { marginLeft: 110 }]}>{isDoorOpen ? 'OPEN' : 'CLOSED'}</Text>
           </Pressable>
           <View style={styles.widgetInfo}>
             <Text style={styles.widgetText}>Door Control</Text>
             <View style={{ flexDirection: 'row' }}>
+              {/* widget status */}
               <PhosphorIcons.WifiHigh color={colors.backgroundPrimary} size={20} weight={'regular'} style={{ marginRight: 5 }}/>
               <PhosphorIcons.BatteryHigh color={colors.backgroundPrimary} size={20} weight={'regular'} />
             </View>
@@ -76,6 +91,7 @@ const index = () => {
 export default index
 
 const styles = StyleSheet.create({
+  // scan now link styles
   link: {
     color: colors.cta,
     fontSize: 16,
@@ -86,6 +102,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginTop: 5,
   },
+  lastScanText: {
+    fontSize: 16,
+    color: colors.textSecondary,
+    marginTop: 40,
+  },
+
+  // chicken count styles
   countContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -99,11 +122,8 @@ const styles = StyleSheet.create({
   countText: {
     color: colors.primary,
   },
-  lastScanText: {
-    fontSize: 16,
-    color: colors.textSecondary,
-    marginTop: 40,
-  },
+
+  // widget styles
   widgetContainer: {
     paddingHorizontal: 15,
     marginTop: 10,
@@ -129,6 +149,8 @@ const styles = StyleSheet.create({
     width: '100%',
     opacity: 0.8,
   },
+
+  // door control styles
   doorControl: {
     height: 120,
     width: 300,

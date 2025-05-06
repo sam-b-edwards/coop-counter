@@ -1,34 +1,46 @@
+// Basic imports
 import { StyleSheet, Text, View, Pressable, Image } from 'react-native'
 import React from 'react'
+// Import color pallet and icons
 import * as PhosphorIcons from 'phosphor-react-native'
 import colors from '@/constants/colors'
 
 const scan = () => {
+  // variables
+  var lastScanImage = require('@/assets/images/cameraPlaceholder.jpg')
   return (
+    // main container for scan page (flex 1 to take up all space)
     <View style={{ backgroundColor: colors.backgroundPrimary, flex: 1 }}>
+      {/* scan page info section */}
       <View style={styles.scanInfo}>
+        {/* settings icon and main icon */}
         <PhosphorIcons.Sliders color={colors.backgroundPrimary} size={30} weight={'fill'} style={styles.scanSettings}/>
         <PhosphorIcons.Scan color={colors.backgroundPrimary} size={180} weight={'fill'} style={styles.scanIcon}/>
+        {/* scan help/info */}
         <Text style={[styles.scanText, {fontSize: 20}]}>Choose an option for a</Text>
         <Text style={[styles.scanText, {fontSize: 36, marginTop: -8, marginBottom: 8, fontWeight: 'bold'}]}>Manual Scan</Text>
         <Text style={[styles.scanText, {fontStyle: 'italic', fontSize: 16, fontWeight: '200'}]}>or wait for an automatic scan at <Text style={{fontWeight: 'bold'}}>9:35</Text></Text>
+        {/* camera scan button */}
         <Pressable style={styles.useCameraContainer}>
           <PhosphorIcons.Camera color={colors.backgroundPrimary} size={40} weight={'regular'}/>
           <Text style={{color: colors.backgroundPrimary, fontSize: 20, marginLeft: 5}}>Use Camera</Text>
         </Pressable>
       </View>
 
+      {/* -- or -- */}
       <View style={styles.lineThrough}>
         <Text style={styles.lineThroughText}>or</Text>
       </View>
-      <Text style={{fontSize: 20, color: colors.textSecondary, alignSelf: 'center', marginTop: 25, marginBottom: 15, fontWeight: '500'}}>Capture from Coop</Text>
 
+      <Text style={styles.fromCoopText}>Capture from Coop</Text>
+      {/* coop widget */}
       <View style={styles.widgetContainer}>
               <View style={[styles.widget, { backgroundColor: '#000000' }]}>
-                <Image source={require('@/assets/images/cameraPlaceholder.jpg')} style={styles.coopPreview}/>
+                <Image source={lastScanImage} style={styles.coopPreview}/>
                 <View style={styles.widgetInfo}>
                   <Text style={styles.widgetText}>Coop</Text>
                   <View style={{ flexDirection: 'row' }}>
+                    {/* coop status */}
                     <PhosphorIcons.WifiHigh color={colors.backgroundPrimary} size={20} weight={'regular'} style={{ marginRight: 5 }}/>
                     <PhosphorIcons.BatteryHigh color={colors.backgroundPrimary} size={20} weight={'regular'} />
                   </View>
@@ -42,6 +54,7 @@ const scan = () => {
 export default scan
 
 const styles = StyleSheet.create({
+  // info section
   scanInfo: {
     backgroundColor: colors.primaryTransparent,
     height: 390,
@@ -60,6 +73,8 @@ const styles = StyleSheet.create({
     color: colors.backgroundPrimary,
     textAlign: 'center'
   },
+
+  // camera button
   useCameraContainer: {
     alignSelf: 'center',
     flexDirection: 'row',
@@ -72,6 +87,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center'
   },
+
+  // -- or --
   lineThrough: {
     alignSelf: 'center',
     marginTop: 55,
@@ -87,6 +104,16 @@ const styles = StyleSheet.create({
     marginBottom: -8,
     backgroundColor: colors.backgroundPrimary,
     paddingHorizontal: 10,
+  },
+
+  // capture from coop text and widget
+  fromCoopText: {
+    fontSize: 20, 
+    color: colors.textSecondary, 
+    alignSelf: 'center', 
+    marginTop: 25, 
+    marginBottom: 15, 
+    fontWeight: '500'
   },
   widgetContainer: {
     paddingHorizontal: 15,

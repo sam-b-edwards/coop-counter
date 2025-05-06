@@ -1,3 +1,5 @@
+// Colors used in the app as constants
+
 const colors = {
     primary: '#4CAF50',
     primaryTransparent: '#4CAF5099',
