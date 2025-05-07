@@ -1,20 +1,26 @@
+// Basic imports
 import { StyleSheet, Text, View, Image } from 'react-native'
 import React from 'react'
+// import color pallet and icons
 import * as PhosphorIcons from 'phosphor-react-native';
 import colors from '@/constants/colors'
 
 const header = () => {
+    // variables
     var notifications = 2;
+    var profileImage = require('@/assets/images/pfp.png')
   return (
     <View style={styles.background}>
+        {/* profile and name */}
         <Image
-            source={require('@/assets/images/pfp.png')}
+            source={profileImage}
             style={styles.pfp}
         />
         <View style={styles.nameContainer}>
             <Text style={styles.text}>Kaelan's Coop</Text>
             <PhosphorIcons.CaretDown color={colors.textSecondary} size={20} weight={"bold"} style={styles.icon} />
         </View>
+        {/* notifications */}
         <View style={styles.notificationContainer}>
             <PhosphorIcons.Bell color={colors.textPrimary} size={30} weight={notifications > 0 ? "fill" : "regular"} />
             {notifications > 0 && (
@@ -36,6 +42,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 15,
     },
+    // profile and name
     pfp: {
         height: 50,
         width: 50,
@@ -53,6 +60,7 @@ const styles = StyleSheet.create({
         marginTop: 5,
         marginLeft: 5,
     },
+    // notifications
     notificationContainer: {
         position: 'absolute',
         right: 30,
