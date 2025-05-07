@@ -2,10 +2,11 @@ from fastapi import FastAPI
 from ultralytics import YOLO
 from datetime import datetime
 import os
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
 
-from fastapi.staticfiles import StaticFiles
+# Serve the directory that YOLO saves prediction images into
 app.mount("/output", StaticFiles(directory="runs/detect/predict"), name="output")
 
 # Load the model once when the server starts
@@ -24,21 +25,15 @@ def predict_image():
         avg_conf = sum(box.conf[0].item() for box in boxes) / count if count > 0 else 0
         timestamp = datetime.now().isoformat()
 
-        # Save the predicted image path
-        pred_image_path = os.path.join("output", os.path.basename(result.save_path[0]))
-        public_url = f"/output/{os.path.basename(pred_image_path)}"
-        # Ensure the path is accessible
-        if not os.path.exists(pred_image_path):
-            return {"error": "Predicted image not found"}
-        # Return the public URL
-        pred_image_path = public_url
+        # Get the predicted image filename and public URL
+        pred_filename = os.path.basename(image_path)
+        public_url = f"/output/{pred_filename}"
 
         return {
             "count": count,
             "confidence_percent": round(avg_conf * 100, 1),
             "timestamp": timestamp,
-            "predicted_image": pred_image_path
+            "predicted_image": public_url
         }
 
     return {"error": "No prediction result"}
-
