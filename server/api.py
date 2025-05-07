@@ -10,7 +10,7 @@ model = YOLO("best.pt")
 
 @app.get("/predict")
 def predict_image():
-    image_path = "images/IMG_5134.jpg"  # or any other fixed file
+    image_path = "images/IMG_5134.jpg"
 
     # Run detection
     results = model.predict(source=image_path, conf=0.2, save=True)
@@ -21,10 +21,15 @@ def predict_image():
         avg_conf = sum(box.conf[0].item() for box in boxes) / count if count > 0 else 0
         timestamp = datetime.now().isoformat()
 
+        # Get the saved image path (should be one per result)
+        pred_image_path = result.save_dir + "/" + os.path.basename(image_path)
+
         return {
             "count": count,
             "confidence_percent": round(avg_conf * 100, 1),
-            "timestamp": timestamp
+            "timestamp": timestamp,
+            "predicted_image": pred_image_path
         }
 
     return {"error": "No prediction result"}
+
