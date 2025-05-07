@@ -5,6 +5,9 @@ import os
 
 app = FastAPI()
 
+from fastapi.staticfiles import StaticFiles
+app.mount("/output", StaticFiles(directory="runs/detect/predict"), name="output")
+
 # Load the model once when the server starts
 model = YOLO("best.pt")
 
@@ -21,8 +24,14 @@ def predict_image():
         avg_conf = sum(box.conf[0].item() for box in boxes) / count if count > 0 else 0
         timestamp = datetime.now().isoformat()
 
-        # Get the saved image path (should be one per result)
-        pred_image_path = result.save_dir + "/" + os.path.basename(image_path)
+        # Save the predicted image path
+        pred_image_path = os.path.join("output", os.path.basename(result.save_path[0]))
+        public_url = f"/output/{os.path.basename(pred_image_path)}"
+        # Ensure the path is accessible
+        if not os.path.exists(pred_image_path):
+            return {"error": "Predicted image not found"}
+        # Return the public URL
+        pred_image_path = public_url
 
         return {
             "count": count,
