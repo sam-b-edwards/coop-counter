@@ -15,6 +15,8 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 # Serve the directory that YOLO saves prediction images into
 app.mount("/output", StaticFiles(directory="runs/detect/predict"), name="output")
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+
 
 # Load the model once when the server starts
 model = YOLO("best.pt")
