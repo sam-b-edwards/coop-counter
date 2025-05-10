@@ -2,7 +2,7 @@ from picamera2 import Picamera2
 import requests
 import time
 
-FILENAME = "/home/sam/capture.jpg"
+FILENAME = "/tmp/capture.jpg"
 SERVER_URL = "http://coopcounter.comdevelopment.com/upload"
 
 picam = Picamera2()
