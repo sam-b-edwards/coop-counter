@@ -11,6 +11,14 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 # Serve the directory that YOLO saves prediction images into
 app.mount("/output", StaticFiles(directory="runs/detect/predict"), name="output")
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
