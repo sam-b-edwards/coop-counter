@@ -81,9 +81,14 @@ async def upload_image(camera_id: str = Form(...), file: UploadFile = File(...))
     
     results = model.predict(source=filepath, conf=0.2, save=True)
 
+
+    predicted_image_path = results[0].save_path
+    predicted_image_name = os.path.basename(predicted_image_path)
+
+    shutil.copy(predicted_image_path, os.path.join(UPLOAD_DIR, predicted_image_name))
+
     count = 0
     avg_conf = 0
-    
     for result in results:
         boxes = [box for box in result.boxes if model.names[int(box.cls)] == "Boiler-Chicken"]
         count = len(boxes)
@@ -92,7 +97,6 @@ async def upload_image(camera_id: str = Form(...), file: UploadFile = File(...))
     cursor.execute("INSERT INTO images (userId, image, date, timestamp, chickenCount, certainty) VALUES (%s, %s, %s, %s, %s, %s)", (user["id"], filename, timestamp.strftime("%Y-%m-%d"), timestamp.strftime("%H:%M:%S"), count, round(avg_conf * 100)))
     db.commit()
     cursor.close()
-    db.close()
     return JSONResponse(content={"status": "received", "filename": filename})
 
 @app.get("/user/info")
@@ -102,7 +106,6 @@ def get_user_info(userId: int = Query(...)):
     cursor.execute("SELECT * FROM users WHERE id = %s", (userId,))
     row = cursor.fetchall()
     cursor.close()
-    db.close()
 
     if row:
         return JSONResponse(content=row)
