@@ -7,7 +7,7 @@ from datetime import datetime
 import os
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-
+import mysql.connector
 
 app = FastAPI()
 
@@ -63,3 +63,25 @@ async def upload_image(file: UploadFile = File(...)):
         shutil.copyfileobj(file.file, buffer)
 
     return JSONResponse(content={"status": "received", "filename": filename})
+
+@app.get("/user/info")
+def get_user_info(userID: int = Query(...)):
+    # Connect to the database
+    db = mysql.connector.connect(
+        host="localhost",
+        user="admin",
+        password="S5XF3koM93",
+        database="coopcounter"
+    )
+    cursor = db.cursor(dictionary=True)
+    # Query the database for user information
+    cursor.execute("SELECT * FROM users WHERE id = %s", (userID,))
+    row = cursor.fetchone()
+    cursor.close()
+    db.close()
+    
+    if row:
+        return JSONResponse(content=row)
+    else:
+        return JSONResponse(content={"error": "User not found"}, status_code=404)
+    
