@@ -89,7 +89,7 @@ async def upload_image(camera_id: str = Form(...), file: UploadFile = File(...))
         count = len(boxes)
         avg_conf = sum(box.conf[0].item() for box in boxes) / count if count > 0 else 0
 
-    cursor.excute("INSERT INTO images (userId, image, date, timestamp, chickenCount, certainty) VALUES (%s, %s, %s, %s, %s, %s)", (user["id"], filename, timestamp.strftime("%Y-%m-%d"), timestamp.strftime("%H:%M:%S"), count, round(avg_conf * 100)))
+    cursor.execute("INSERT INTO images (userId, image, date, timestamp, chickenCount, certainty) VALUES (%s, %s, %s, %s, %s, %s)", (user["id"], filename, timestamp.strftime("%Y-%m-%d"), timestamp.strftime("%H:%M:%S"), count, round(avg_conf * 100)))
     db.commit()
     cursor.close()
     db.close()
