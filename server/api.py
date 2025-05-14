@@ -81,10 +81,12 @@ async def upload_image(camera_id: str = Form(...), file: UploadFile = File(...))
     
     results = model.predict(source=filepath, conf=0.2, save=True)
 
+    if not results or not results[0].boxes:
+        return JSONResponse(content={"error": "No predictions made"}, status_code=400)
+
 
     predicted_image_path = results[0].save_path
     predicted_image_name = os.path.basename(predicted_image_path)
-
     shutil.copy(predicted_image_path, os.path.join(UPLOAD_DIR, predicted_image_name))
 
     count = 0
@@ -97,7 +99,13 @@ async def upload_image(camera_id: str = Form(...), file: UploadFile = File(...))
     cursor.execute("INSERT INTO images (userId, image, date, timestamp, chickenCount, certainty) VALUES (%s, %s, %s, %s, %s, %s)", (user["id"], filename, timestamp.strftime("%Y-%m-%d"), timestamp.strftime("%H:%M:%S"), count, round(avg_conf * 100)))
     db.commit()
     cursor.close()
-    return JSONResponse(content={"status": "received", "filename": filename})
+    return JSONResponse(content={
+        "message": "Image uploaded successfully",
+        "filename": filename,
+        "count": count,
+        "confidence_percent": round(avg_conf * 100, 1),
+        "image_url": f"http://coopcounter.comdevelopment.com/uploads/{predicted_image_name}",
+    })
 
 @app.get("/user/info")
 def get_user_info(userId: int = Query(...)):
