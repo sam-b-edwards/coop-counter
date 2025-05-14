@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Query
-from fastapi import UploadFile, File
+from fastapi import UploadFile, File, Form
 from fastapi.responses import JSONResponse
 import shutil
 from ultralytics import YOLO
