@@ -67,9 +67,9 @@ def predict_image():
 async def upload_image(camera_id: str = Form(...), file: UploadFile = File(...)):
     timestamp = datetime.now()
     filename = f"{timestamp.strftime('%Y%m%d-%H%M%S')}_{file.filename}"
-    filepath = os.path.join(UPLOAD_DIR, filename)
+    original_path = os.path.join(UPLOAD_DIR, filename)
 
-    with open(filepath, "wb") as buffer:
+    with open(original_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
     cursor = db.cursor(dictionary=True)
@@ -79,15 +79,19 @@ async def upload_image(camera_id: str = Form(...), file: UploadFile = File(...))
     if not user:
         return JSONResponse(content={"error": "Camera ID not found"}, status_code=400)
     
-    results = model.predict(source=filepath, conf=0.2, save=True)
+    results = model.predict(source=original_path, conf=0.2, save=True)
+
 
     if not results or not results[0].boxes:
         return JSONResponse(content={"error": "No predictions made"}, status_code=400)
 
-    save_dir = results[0].save_dir   
-    predicted_image_name = os.path.basename(filepath)
+    save_dir = results[0].save_dir
+    predicted_image_name = os.path.basename(original_path)
     predicted_image_path = os.path.join(save_dir, predicted_image_name)
-    shutil.copy(predicted_image_path, os.path.join(UPLOAD_DIR, predicted_image_name))
+
+    shutil.copy(predicted_image_path, os.path.join("output", predicted_image_name))
+
+
 
 
 
@@ -103,10 +107,10 @@ async def upload_image(camera_id: str = Form(...), file: UploadFile = File(...))
     cursor.close()
     return JSONResponse(content={
         "message": "Image uploaded successfully",
-        "filename": predicted_image_name,
         "count": count,
         "confidence_percent": round(avg_conf * 100, 1),
-        "image_url": f"http://coopcounter.comdevelopment.com/uploads/{predicted_image_name}",
+        "original_image_url": f"http://coopcounter.comdevelopment.com/uploads/{filename}",
+        "predicted_image_url": f"http://coopcounter.comdevelopment.com/output/{predicted_image_name}",
     })
 
 @app.get("/user/info")
