@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 from fastapi import UploadFile, File
 from fastapi.responses import JSONResponse
 import shutil
@@ -79,7 +79,7 @@ def get_user_info(userID: int = Query(...)):
     row = cursor.fetchone()
     cursor.close()
     db.close()
-    
+
     if row:
         return JSONResponse(content=row)
     else:
