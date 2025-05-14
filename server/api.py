@@ -85,9 +85,11 @@ async def upload_image(camera_id: str = Form(...), file: UploadFile = File(...))
         return JSONResponse(content={"error": "No predictions made"}, status_code=400)
 
 
-    predicted_image_path = results[0].save_path
-    predicted_image_name = os.path.basename(predicted_image_path)
+    predicted_image_name = os.path.basename(filepath)
+    predicted_image_path = os.path.join("runs", "detect", "predict", predicted_image_name)
     shutil.copy(predicted_image_path, os.path.join(UPLOAD_DIR, predicted_image_name))
+
+
 
     count = 0
     avg_conf = 0
@@ -96,12 +98,12 @@ async def upload_image(camera_id: str = Form(...), file: UploadFile = File(...))
         count = len(boxes)
         avg_conf = sum(box.conf[0].item() for box in boxes) / count if count > 0 else 0
 
-    cursor.execute("INSERT INTO images (userId, image, date, timestamp, chickenCount, certainty) VALUES (%s, %s, %s, %s, %s, %s)", (user["id"], filename, timestamp.strftime("%Y-%m-%d"), timestamp.strftime("%H:%M:%S"), count, round(avg_conf * 100)))
+    cursor.execute("INSERT INTO images (userId, image, date, timestamp, chickenCount, certainty) VALUES (%s, %s, %s, %s, %s, %s)", (user["id"], predicted_image_name, timestamp.strftime("%Y-%m-%d"), timestamp.strftime("%H:%M:%S"), count, round(avg_conf * 100)))
     db.commit()
     cursor.close()
     return JSONResponse(content={
         "message": "Image uploaded successfully",
-        "filename": filename,
+        "filename": predicted_image_name,
         "count": count,
         "confidence_percent": round(avg_conf * 100, 1),
         "image_url": f"http://coopcounter.comdevelopment.com/uploads/{predicted_image_name}",
