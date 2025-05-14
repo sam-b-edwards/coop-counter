@@ -84,9 +84,9 @@ async def upload_image(camera_id: str = Form(...), file: UploadFile = File(...))
     if not results or not results[0].boxes:
         return JSONResponse(content={"error": "No predictions made"}, status_code=400)
 
-
+    save_dir = results[0].save_dir   
     predicted_image_name = os.path.basename(filepath)
-    predicted_image_path = os.path.join("runs", "detect", "predict", predicted_image_name)
+    predicted_image_path = os.path.join(save_dir, predicted_image_name)
     shutil.copy(predicted_image_path, os.path.join(UPLOAD_DIR, predicted_image_name))
 
 
