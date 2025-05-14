@@ -9,13 +9,11 @@ FILENAME = "/tmp/capture.jpg"
 SERVER_URL = "http://coopcounter.comdevelopment.com/upload"
 ID_FILE = '/home/pi/ID.txt'
 
-if os.path.exists(ID_FILE):
-    with open(ID_FILE, 'r') as f:
-        camera_id = f.read().strip()
-else:
-    camera_id = str(uuid.uuid4())
-    with open(ID_FILE, 'w') as f:
-        f.write(camera_id)
+if not os.path.exists(ID_FILE):
+    print("ERROR: Camera ID file not found.")
+    exit(1)
+with open(ID_FILE, "r") as f:
+    camera_id = f.read().strip()
 
 print("Camera ID:", camera_id)
 
