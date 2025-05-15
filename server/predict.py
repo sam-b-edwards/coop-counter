@@ -70,7 +70,7 @@ for row in rows:
     now = datetime.now()
 
     # execute the update query to update the chicken count and certainty in the database
-    cursor.execute("UPDATE images SET chickenCount = %s, certainty = %s, ai_detected_at = %s WHERE imageId = %s", (count, round(avg_conf * 100), now, image_id))
+    cursor.execute("UPDATE images SET chickenCount = %s, certainty = %s, ai_predicted_at = %s WHERE imageId = %s", (count, round(avg_conf * 100), now, image_id))
     db.commit()
     print(f"Updated image {image_id} with chicken count: {count} and certainty: {round(avg_conf * 100)}%")
 
