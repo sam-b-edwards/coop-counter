@@ -86,7 +86,7 @@ async def upload_image(camera_id: str = Form(...), file: UploadFile = File(...))
         return JSONResponse(content={"error": "No predictions made"}, status_code=400)
 
     save_dir = results[0].save_dir   
-    predicted_image_name = os.path.basename(filepath)
+    predicted_image_name = os.path.basename(original_path)
     predicted_image_path = os.path.join(save_dir, predicted_image_name)
     shutil.copy(predicted_image_path, os.path.join(UPLOAD_DIR, predicted_image_name))
 
