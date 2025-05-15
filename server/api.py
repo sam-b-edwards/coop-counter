@@ -79,7 +79,14 @@ async def upload_image(camera_id: str = Form(...), file: UploadFile = File(...))
     if not user:
         return JSONResponse(content={"error": "Camera ID not found"}, status_code=400)
     
-    results = model.predict(source=original_path, conf=0.2, save=True)
+    results = model.predict(
+        source=original_path,
+        conf=0.2,
+        save=True,
+        project="runs/detect",
+        name="predict",
+        exist_ok=True
+    )
 
 
     if not results or not results[0].boxes:
@@ -87,10 +94,6 @@ async def upload_image(camera_id: str = Form(...), file: UploadFile = File(...))
 
     save_dir = results[0].save_dir   
     predicted_image_name = os.path.basename(original_path)
-    predicted_image_path = os.path.join(save_dir, predicted_image_name)
-    shutil.copy(predicted_image_path, os.path.join(UPLOAD_DIR, predicted_image_name))
-
-
 
     count = 0
     avg_conf = 0
