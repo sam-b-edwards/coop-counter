@@ -76,15 +76,13 @@ def get_user_info(userId: int = Query(...)):
 def get_latest_user_image(userId: int = Query(...)):
     cursor = db.cursor(dictionary=True)
     cursor.execute(
-        "SELECT * FROM images WHERE userId = %s ORDER BY uploaded_at DESC LIMIT 1", (userId,))
+        "SELECT * FROM images WHERE userId = %s AND ai_predicted_at IS NOT NULL ORDER BY uploaded_at DESC LIMIT 1", (userId,))
     row = cursor.fetchone()
     cursor.close()
-
     if not row:
-        return JSONResponse(content={"error": "No images found for this user"}, status_code=404)
+        return JSONResponse(content={"error": "No predicted images found for this user"}, status_code=404)
 
     filename = row["image"]
     row["original_url"] = f"http://coopcounter.comdevelopment.com/uploads/{filename}"
     row["predicted_url"] = f"http://coopcounter.comdevelopment.com/output/{filename}"
-
     return row
