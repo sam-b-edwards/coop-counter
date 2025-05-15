@@ -27,6 +27,7 @@ app.add_middleware(
 
 UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
+os.makedirs("runs/detect/predict", exist_ok=True)
 
 app.mount("/output", StaticFiles(directory="runs/detect/predict"), name="output")
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
