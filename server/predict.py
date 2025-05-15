@@ -5,11 +5,13 @@ from ultralytics import YOLO
 import mysql.connector
 
 # Constants for directories
-UPLOAD_DIR = "uploads"
-OUTPUT_DIR = "runs/detect/predict"
+BASE_DIR = "/home/sam/counting-chickens/server"
+UPLOAD_DIR = f"{BASE_DIR}/uploads"
+OUTPUT_DIR = f"{BASE_DIR}/runs/detect/predict"
+MODEL_PATH = f"{BASE_DIR}/best.pt"
 
 # Load model
-model = YOLO("/home/sam/counting-chickens/server/best.pt")
+model = YOLO(MODEL_PATH)
 
 # Connect to DB
 db = mysql.connector.connect(
@@ -49,7 +51,7 @@ for row in rows:
         source=image_path,
         conf=0.2,
         save=True,
-        project="runs/detect",
+        project=f"{BASE_DIR}/runs/detect",
         name="predict",
         exist_ok=True
     )
