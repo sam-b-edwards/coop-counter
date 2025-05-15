@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import os
 from datetime import datetime
 from ultralytics import YOLO
@@ -8,7 +9,7 @@ UPLOAD_DIR = "uploads"
 OUTPUT_DIR = "runs/detect/predict"
 
 # Load model
-model = YOLO("best.pt")
+model = YOLO("/home/sam/counting-chickens/server/best.pt")
 
 # Connect to DB
 db = mysql.connector.connect(
