@@ -86,3 +86,33 @@ def get_latest_user_image(userId: int = Query(...)):
     row["original_url"] = f"http://coopcounter.comdevelopment.com/uploads/{filename}"
     row["predicted_url"] = f"http://coopcounter.comdevelopment.com/output/{filename}"
     return row
+
+@app.get("/user/images")
+def get_user_images(userId: int = Query(...)):
+    cursor = db.cursor(dictionary=True)
+    cursor.execute(
+        "SELECT * FROM images WHERE userId = %s ORDER BY uploaded_at DESC", (userId,))
+    rows = cursor.fetchall()
+    cursor.close()
+
+    if not rows:
+        return JSONResponse(content={"error": "No images found for this user"}, status_code=404)
+
+    for row in rows:
+        filename = row["image"]
+        row["original_url"] = f"http://coopcounter.comdevelopment.com/uploads/{filename}"
+        row["predicted_url"] = f"http://coopcounter.comdevelopment.com/output/{filename}"
+
+    return rows
+
+@app.get("/user/info/all")
+def get_all_user_info():
+    cursor = db.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM users")
+    rows = cursor.fetchall()
+    cursor.close()
+
+    if not rows:
+        return JSONResponse(content={"error": "No users found"}, status_code=404)
+
+    return rows
