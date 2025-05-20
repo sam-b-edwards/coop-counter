@@ -6,7 +6,7 @@ import os
 
 FILENAME = "/tmp/capture.jpg"
 SERVER_URL = "http://coopcounter.comdevelopment.com/upload"
-ID_FILE = '/home/pi/ID.txt'
+ID_FILE = '/home/sam/ID.txt'
 
 if not os.path.exists(ID_FILE):
     print("ERROR: Camera ID file not found.")
