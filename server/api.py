@@ -68,7 +68,7 @@ def get_user_info(userId: int = Query(...)):
     cursor.close()
 
     if row:
-        return row
+        return JSONResponse(content=row)
     else:
         return JSONResponse(content={"error": "User not found"}, status_code=404)
     
