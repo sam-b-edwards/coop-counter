@@ -64,7 +64,7 @@ def get_user_info(userId: int = Query(...)):
     cursor = db.cursor(dictionary=True)
     # Query the database for user information
     cursor.execute("SELECT * FROM users WHERE id = %s", (userId,))
-    row = cursor.fetchall()
+    row = cursor.fetchone()
     cursor.close()
 
     if row:
