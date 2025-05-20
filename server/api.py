@@ -10,12 +10,13 @@ import mysql.connector
 
 app = FastAPI()
 
-db = mysql.connector.connect(
-    host="localhost",
-    user="admin",
-    password="S5XF3koM93",
-    database="coopcounter"
-)
+def get_db():
+    return mysql.connector.connect(
+        host="localhost",
+        user="admin",
+        password="S5XF3koM93",
+        database="coopcounter"
+    )
 
 app.add_middleware(
     CORSMiddleware,
@@ -40,7 +41,8 @@ async def upload_image(camera_id: str = Form(...), file: UploadFile = File(...))
 
     with open(original_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
-
+    
+    db = get_db()
     cursor = db.cursor(dictionary=True)
     cursor.execute("SELECT id FROM users WHERE cameraId = %s", (camera_id,))
     user = cursor.fetchone()
@@ -52,6 +54,7 @@ async def upload_image(camera_id: str = Form(...), file: UploadFile = File(...))
     cursor.execute("INSERT INTO images (userId, image) VALUES (%s, %s)", (user["id"], filename))
     db.commit()
     cursor.close()
+    db.close()
 
     return JSONResponse(content={
         "message": "Image uploaded successfully",
@@ -61,11 +64,14 @@ async def upload_image(camera_id: str = Form(...), file: UploadFile = File(...))
 
 @app.get("/user/info")
 def get_user_info(userId: int = Query(...)):
+    db = get_db()
     cursor = db.cursor(dictionary=True)
     # Query the database for user information
     cursor.execute("SELECT * FROM users WHERE id = %s", (userId,))
     row = cursor.fetchone()
+    db.commit()
     cursor.close()
+    db.close()
 
     if row:
         return JSONResponse(content=row)
@@ -74,11 +80,14 @@ def get_user_info(userId: int = Query(...)):
     
 @app.get("/user/images/latest")
 def get_latest_user_image(userId: int = Query(...)):
+    db = get_db()
     cursor = db.cursor(dictionary=True)
     cursor.execute(
         "SELECT * FROM images WHERE userId = %s AND ai_predicted_at IS NOT NULL ORDER BY uploaded_at DESC LIMIT 1", (userId,))
     row = cursor.fetchone()
+    db.commit()
     cursor.close()
+    db.close()
     if not row:
         return JSONResponse(content={"error": "No predicted images found for this user"}, status_code=404)
 
@@ -89,11 +98,14 @@ def get_latest_user_image(userId: int = Query(...)):
 
 @app.get("/user/images")
 def get_user_images(userId: int = Query(...)):
+    db = get_db()
     cursor = db.cursor(dictionary=True)
     cursor.execute(
         "SELECT * FROM images WHERE userId = %s ORDER BY uploaded_at DESC", (userId,))
     rows = cursor.fetchall()
+    db.commit()
     cursor.close()
+    db.close()
 
     if not rows:
         return JSONResponse(content={"error": "No images found for this user"}, status_code=404)
@@ -107,11 +119,14 @@ def get_user_images(userId: int = Query(...)):
 
 @app.get("/user/info/")
 def get_user_info(userId: int = Query(...)):
+    db = get_db()
     cursor = db.cursor(dictionary=True)
     # Query the database for user information
     cursor.execute("SELECT * FROM users WHERE id = %s", (userId,))
     row = cursor.fetchall()
+    db.commit()
     cursor.close()
+    db.close()
 
     if row:
         return JSONResponse(content=row)
