@@ -68,7 +68,7 @@ def get_user_info(userId: int = Query(...)):
     cursor.close()
 
     if row:
-        return JSONResponse(content=row)
+        return row
     else:
         return JSONResponse(content={"error": "User not found"}, status_code=404)
     
@@ -105,14 +105,15 @@ def get_user_images(userId: int = Query(...)):
 
     return rows
 
-@app.get("/user/info/all")
-def get_all_user_info():
+@app.get("/user/info/")
+def get_user_info(userId: int = Query(...)):
     cursor = db.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM users")
-    rows = cursor.fetchall()
+    # Query the database for user information
+    cursor.execute("SELECT * FROM users WHERE id = %s", (userId,))
+    row = cursor.fetchall()
     cursor.close()
 
-    if not rows:
-        return JSONResponse(content={"error": "No users found"}, status_code=404)
-
-    return rows
+    if row:
+        return JSONResponse(content=row)
+    else:
+        return JSONResponse(content={"error": "User not found"}, status_code=404)

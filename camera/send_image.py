@@ -2,8 +2,7 @@ from picamera2 import Picamera2
 import requests
 import time
 import os
-import uuid
-import json
+
 
 FILENAME = "/tmp/capture.jpg"
 SERVER_URL = "http://coopcounter.comdevelopment.com/upload"
