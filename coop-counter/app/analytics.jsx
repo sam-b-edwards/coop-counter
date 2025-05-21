@@ -10,12 +10,14 @@ import testData from '@/components/testData'
 
 const analytics = () => {
   return (
-    
+    pass
   )
 }
 
 export default analytics
 
 const styles = StyleSheet.create({
-  hourlyGraph
+  hourlyGraph: {
+    
+  }
 })
