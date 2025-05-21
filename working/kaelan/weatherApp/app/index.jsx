@@ -6,6 +6,7 @@ import Icon from '@expo/vector-icons/Ionicons'
 
 
 
+
 export default function Index() {
 
   const city = 'Christchurch'
