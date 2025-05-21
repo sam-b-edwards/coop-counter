@@ -1,13 +1,40 @@
 // Basic imports
 import { StyleSheet, Text, View, Pressable, Image } from 'react-native'
-import React from 'react'
+import React, {useState, useEffect} from 'react'
+import { fetchData } from "../api/apiQuery";
 // Import color pallet and icons
 import * as PhosphorIcons from 'phosphor-react-native'
 import colors from '@/constants/colors'
 
 const scan = () => {
+    const [data, setData] = useState(null)
+    const id = 1
+    const endpoint = `user/images/latest?userId=${id}`
+
+    useEffect(() => {
+        handleSearch()
+    }, [])
+
+    useEffect(() => {
+        if (data !== null){
+            console.log('userInfo: ', data)
+            setLastScanImage(data.original_url)
+            
+        }
+    }, [data])
+
+    const handleSearch = async () => {
+        try {
+          const result = await fetchData(endpoint);
+          setData(result)
+        }
+        catch (error) {
+          throw error
+        }
+      }
+
   // variables
-  var lastScanImage = require('@/assets/images/cameraPlaceholder.jpg')
+  const [lastScanImage, setLastScanImage] = useState(null)
   return (
     // main container for scan page (flex 1 to take up all space)
     <View style={{ backgroundColor: colors.backgroundPrimary, flex: 1 }}>
@@ -21,7 +48,11 @@ const scan = () => {
         <Text style={[styles.scanText, {fontSize: 36, marginTop: -8, marginBottom: 8, fontWeight: 'bold'}]}>Manual Scan</Text>
         <Text style={[styles.scanText, {fontStyle: 'italic', fontSize: 16, fontWeight: '200'}]}>or wait for an automatic scan at <Text style={{fontWeight: 'bold'}}>9:35</Text></Text>
         {/* camera scan button */}
-        <Pressable style={styles.useCameraContainer}>
+        <Pressable style={styles.useCameraContainer}
+          onPress={() => {
+            console.log('use camera')
+          }}
+        >
           <PhosphorIcons.Camera color={colors.backgroundPrimary} size={40} weight={'regular'}/>
           <Text style={{color: colors.backgroundPrimary, fontSize: 20, marginLeft: 5}}>Use Camera</Text>
         </Pressable>
