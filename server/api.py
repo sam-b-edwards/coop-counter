@@ -116,19 +116,3 @@ def get_user_images(userId: int = Query(...)):
         row["predicted_url"] = f"http://coopcounter.comdevelopment.com/output/{filename}"
 
     return rows
-
-@app.get("/user/info/")
-def get_user_info(userId: int = Query(...)):
-    db = get_db()
-    cursor = db.cursor(dictionary=True)
-    # Query the database for user information
-    cursor.execute("SELECT * FROM users WHERE id = %s", (userId,))
-    row = cursor.fetchall()
-    db.commit()
-    cursor.close()
-    db.close()
-
-    if row:
-        return JSONResponse(content=row)
-    else:
-        return JSONResponse(content={"error": "User not found"}, status_code=404)
