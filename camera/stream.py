@@ -17,9 +17,6 @@ controls = {
     "Contrast": 1.3,
     "Brightness": 0.0,
     "Sharpness": 1.4,
-    "AeEnable": False,
-    "ExposureTime": 100000,
-    "AnalogueGain": 1.0,
 }
 picam.set_controls(controls)
 
