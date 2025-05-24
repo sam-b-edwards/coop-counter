@@ -6,8 +6,21 @@ import asyncio
 
 app = FastAPI()
 
+
 picam = Picamera2()
-picam.configure(picam.create_video_configuration(main={"size": (640, 480)}))
+config = picam.create_video_configuration(main={"size": (1280, 720)})
+picam.configure(config)
+
+
+controls = {
+    "Saturation": 1.5,        
+    "Contrast": 1.3,          
+    "Brightness": 0.0,        
+    "Sharpness": 1.2,         
+    "AwbMode": "auto",        
+}
+picam.set_controls(controls)
+
 picam.start()
 
 async def generate_frames():
