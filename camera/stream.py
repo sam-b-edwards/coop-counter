@@ -16,8 +16,7 @@ controls = {
     "Saturation": 1.5,        
     "Contrast": 1.3,          
     "Brightness": 0.0,        
-    "Sharpness": 1.2,         
-    "AwbMode": "auto",        
+    "Sharpness": 1.2,
 }
 picam.set_controls(controls)
 
