@@ -13,10 +13,13 @@ picam.configure(config)
 
 
 controls = {
-    "Saturation": 1.5,        
-    "Contrast": 1.3,          
-    "Brightness": 0.0,        
-    "Sharpness": 1.2,
+    "Saturation": 1.8,
+    "Contrast": 1.3,
+    "Brightness": 0.0,
+    "Sharpness": 1.4,
+    "Exposure": 100000,
+    "AnalogueGain": 1.0,
+    "AwbMode": "daylight",
 }
 picam.set_controls(controls)
 
