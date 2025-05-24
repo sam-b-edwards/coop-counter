@@ -1,24 +1,86 @@
 // Basic imports
 import { StyleSheet, Text, View, Pressable, Image } from 'react-native'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useRouter } from 'expo-router';
+import { fetchData } from "../api/apiQuery";
 // Import color pallet and icons
 import * as PhosphorIcons from 'phosphor-react-native';
 import colors from '@/constants/colors'
 
 const index = () => {
+  const userId = 1
+  const endpointLatest = `user/images/latest?userId=${userId}`
+  const endpointUser = `user/info?userId=${userId}`
+  const [latestData, setLatestData] = useState(null)
+  const [userData, setUserData] = useState(null)
+
+  useEffect(() => {
+    handleSearch()
+  }, [])
+
+  useEffect(() => {
+    if (userData !== null) {
+      try {
+        setMaxCount(userData.totalChickens)
+      }
+      catch (error) {
+        console.log(error)
+      }
+    }
+  }, [userData])
+
+  useEffect(() => {
+    if (latestData !== null) {
+      console.log('lastScan:', latestData)
+      try {
+      setCount(latestData.chickenCount)
+      setCertainty(latestData.certainty)
+      const [datePart, timePart] = latestData.ai_predicted_at.split('T');
+      var [hour, minute] = timePart.split(':');
+      var timeframe = ''
+      if (Number(hour) > 12) {
+        hour = Number(hour) - 12
+        timeframe = 'PM'
+      } else {
+        Number(hour) == 0 ? hour = 12 : hour = Number(hour)
+        timeframe = 'AM'
+      }
+      setLastScan(`Today at ${hour}:${minute} ${timeframe}`)
+      setLastScanImage(latestData.original_url)
+      }
+
+      catch (error) {
+        console.error(error)
+      }
+      
+    }
+  }, [latestData])
+
+  const handleSearch = async () => {
+    try {
+      const resultLatest = await fetchData(endpointLatest);
+      setLatestData(resultLatest)
+      const resultUser = await fetchData(endpointUser);
+      setUserData(resultUser)
+    }
+    catch (error) {
+      throw error
+    }
+  }
+
   const router = useRouter()
   // Variables for dashboard display and interractions
-  var count = 14
-  var maxCount = 24
-  var certainty = 98
-  var lastScan = 'Today at 9:30 AM'
-  var lastScanImage = require('@/assets/images/cameraPlaceholder.jpg')
+  const [maxCount, setMaxCount] = useState('?')
+  const [certainty, setCertainty] = useState('?')
+  const [lastScan, setLastScan] = useState('?')
+  const [lastScanImage, setLastScanImage] = useState(null)
   const [isDoorOpen, setIsDoorOpen] = useState(true)
+  const [count, setCount] = useState('?')
 
+  
   return (
     // Main container for dashboard (flex 1 to take up all space)
-    <View style={{ backgroundColor: colors.backgroundPrimary, flex: 1 }}>
+    <View style={{ backgroundColor: colors.backgroundPrimary, flex: 1}}>
     <View>
       {/* Chicken count display */}
       <View style={styles.countContainer}>

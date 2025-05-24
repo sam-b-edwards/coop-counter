@@ -1,11 +1,42 @@
 // Basic imports
 import { StyleSheet, Text, View, Image, Pressable } from 'react-native'
-import React from 'react'
+import React, {useState, useEffect} from 'react'
+import { fetchData } from "../api/apiQuery";
 // Import color pallet and icons
 import colors from '@/constants/colors'
 import * as PhosphorIcons from 'phosphor-react-native';
 
 const profile = () => {
+
+  const [data, setData] = useState(null)
+  const id = 1
+  const endpoint = `user/info?userId=${id}`
+
+  useEffect(() => {
+      handleSearch()
+  }, [])
+
+  useEffect(() => {
+      if (data !== null){
+          console.log('userInfo: ', data)
+          setName(data.name)
+          setEmail(data.email)
+      }
+  }, [data])
+
+  const handleSearch = async () => {
+      try {
+        const result = await fetchData(endpoint);
+        setData(result)
+      }
+      catch (error) {
+        throw error
+      }
+    }
+
+
+  const [name, setName] = useState('?')
+  const [email, setEmail] = useState('?')
   var bannerImage = require('@/assets/images/banner.jpg')
   var profileImage = require('@/assets/images/pfp.png')
   return (
@@ -20,9 +51,9 @@ const profile = () => {
         </View>
       </View>
       {/* name and info */}
-      <Text style={{alignSelf: 'center', fontSize: 24, fontWeight: '700', marginTop: 20}}>Kaelan Graham</Text>
+      <Text style={{alignSelf: 'center', fontSize: 24, fontWeight: '700', marginTop: 20}}>{name}</Text>
       <View style={styles.emailContainer}>
-        <Text style={{color: colors.textSecondary}}>kaelangraham@gmail.com</Text>
+        <Text style={{color: colors.textSecondary}}>{email}</Text>
       </View>
 
       {/* options */}

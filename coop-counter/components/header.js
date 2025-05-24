@@ -1,14 +1,47 @@
 // Basic imports
 import { StyleSheet, Text, View, Image } from 'react-native'
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import { fetchData } from "../api/apiQuery";
 // import color pallet and icons
 import * as PhosphorIcons from 'phosphor-react-native';
 import colors from '@/constants/colors'
 
 const header = () => {
+
+    const [data, setData] = useState(null)
+    const id = 1
+    const endpoint = `user/info?userId=${id}`
+
+    useEffect(() => {
+        handleSearch()
+    }, [])
+
+    useEffect(() => {
+        if (data !== null){
+            console.log('userInfo: ', data)
+            try {
+                setName(data.name.split(' ')[0])
+            }
+            catch (error) {
+                console.log(error)
+            }
+        }
+    }, [data])
+
+    const handleSearch = async () => {
+        try {
+          const result = await fetchData(endpoint);
+          setData(result)
+        }
+        catch (error) {
+          throw error
+        }
+      }
+
     // variables
     var notifications = 2;
     var profileImage = require('@/assets/images/pfp.png')
+    const [name, setName] = useState('?')
   return (
     <View style={styles.background}>
         {/* profile and name */}
@@ -17,7 +50,7 @@ const header = () => {
             style={styles.pfp}
         />
         <View style={styles.nameContainer}>
-            <Text style={styles.text}>Kaelan's Coop</Text>
+            <Text style={styles.text}>{name}'s Coop</Text>
             <PhosphorIcons.CaretDown color={colors.textSecondary} size={20} weight={"bold"} style={styles.icon} />
         </View>
         {/* notifications */}
