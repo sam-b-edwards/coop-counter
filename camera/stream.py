@@ -19,7 +19,9 @@ controls = {
     "Sharpness": 1.4,
     "Exposure": 100000,
     "AnalogueGain": 1.0,
-    "AwbMode": "daylight",
+    "AwbMode": "1",
+    "AwbGains": (1.0, 1.0),
+    "AwbBias": 0.0,
 }
 picam.set_controls(controls)
 
