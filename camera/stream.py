@@ -8,7 +8,7 @@ app = FastAPI()
 
 
 picam = Picamera2()
-config = picam.create_video_configuration(main={"size": (1280, 720)})
+config = picam.create_video_configuration(main={"size": (2304, 1296)})
 picam.configure(config)
 
 
