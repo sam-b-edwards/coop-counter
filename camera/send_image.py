@@ -3,7 +3,6 @@ import requests
 import time
 import os
 
-
 FILENAME = "/tmp/capture.jpg"
 SERVER_URL = "http://coopcounter.comdevelopment.com/upload"
 ID_FILE = '/home/sam/ID.txt'
@@ -17,11 +16,26 @@ with open(ID_FILE, "r") as f:
 print("Camera ID:", camera_id)
 
 picam = Picamera2()
-picam.configure(picam.create_still_configuration())
+
+config = picam.create_still_configuration(main={"size": (2304, 1296)})
+picam.configure(config)
+
+controls = {
+    "Saturation": 1.8,
+    "Contrast": 1.3,
+    "Brightness": 0.0,
+    "Sharpness": 1.4,
+}
+picam.set_controls(controls)
+
+
 picam.start()
-time.sleep(2)
+time.sleep(2)  
+
+
 picam.capture_file(FILENAME)
 print("Image captured.")
+
 
 with open(FILENAME, "rb") as f:
     response = requests.post(SERVER_URL, files={"file": f}, data={"camera_id": camera_id})
