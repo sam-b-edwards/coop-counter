@@ -1,28 +1,7 @@
-const testData = [
-    { chickenCount: 24, certainty: 41, time: '00:00:00' },
-    { chickenCount: 24, certainty: 47, time: '01:00:00' },
-    { chickenCount: 24, certainty: 53, time: '02:00:00' },
-    { chickenCount: 24, certainty: 58, time: '03:00:00' },
-    { chickenCount: 24, certainty: 62, time: '04:00:00' },
-    { chickenCount: 24, certainty: 66, time: '05:00:00' },
-    { chickenCount: 22, certainty: 69, time: '06:00:00' },
-    { chickenCount: 18, certainty: 73, time: '07:00:00' },
-    { chickenCount: 12, certainty: 78, time: '08:00:00' },
-    { chickenCount: 8, certainty: 83, time: '09:00:00' },
-    { chickenCount: 6, certainty: 88, time: '10:00:00' },
-    { chickenCount: 4, certainty: 92, time: '11:00:00' },
-    { chickenCount: 3, certainty: 89, time: '12:00:00' },
-    { chickenCount: 2, certainty: 84, time: '13:00:00' },
-    { chickenCount: 2, certainty: 81, time: '14:00:00' },
-    { chickenCount: 3, certainty: 77, time: '15:00:00' },
-    { chickenCount: 5, certainty: 74, time: '16:00:00' },
-    { chickenCount: 8, certainty: 79, time: '17:00:00' },
-    { chickenCount: 12, certainty: 83, time: '18:00:00' },
-    { chickenCount: 16, certainty: 87, time: '19:00:00' },
-    { chickenCount: 20, certainty: 91, time: '20:00:00' },
-    { chickenCount: 22, certainty: 96, time: '21:00:00' },
-    { chickenCount: 24, certainty: 99, time: '22:00:00' },
-    { chickenCount: 24, certainty: 100, time: '23:00:00' },
-];
+const testData = Array.from({ length: 24 }, (_, i) => ({
+    chickenCount: Math.floor(Math.random() * 25), // random between 0 and 24
+    certainty: [41, 47, 53, 58, 62, 66, 69, 73, 78, 83, 88, 92, 89, 84, 81, 77, 74, 79, 83, 87, 91, 96, 99, 100][i],
+    time: `${i.toString().padStart(2, '0')}:00:00`
+}));
 
 export default testData;
