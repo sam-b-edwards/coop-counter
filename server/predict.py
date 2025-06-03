@@ -64,7 +64,7 @@ for row in rows:
     # calculates the average confidence
     # if there are no detections, the count will be 0 and avg_conf will be 0
     for result in results:
-        boxes = [box for box in result.boxes if model.names[int(box.cls)] == "Boiler-Chicken"]
+        boxes = [box for box in result.boxes if model.names[int(box.cls)] == "chicken"]
         count = len(boxes)
         if count > 0:
             avg_conf = sum(box.conf[0].item() for box in boxes) / count
