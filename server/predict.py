@@ -58,7 +58,7 @@ for row in rows:
 
     # variables to store the chicken count and average confidence for the image
     count = 0
-    avg_conf = 0
+    avg_conf = 0.0
 
     # Loop through the results and counts the number of "Boiler-Chicken" detections
     # calculates the average confidence
@@ -77,6 +77,7 @@ for row in rows:
     db.commit()
     print(f"Updated image {image_id} with chicken count: {count} and certainty: {round(avg_conf * 100)}%")
 
-    # Close the cursor and database connection
-    cursor.close()
-    db.close()
+
+# Close the cursor and database connection
+cursor.close()
+db.close()
