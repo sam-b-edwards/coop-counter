@@ -1,48 +1,73 @@
 // Basic imports
-import { StyleSheet, Text, View, Pressable, Image, Dimensions } from 'react-native'
+import { StyleSheet, Text, View, Pressable, Dimensions } from 'react-native'
 import React, { useState, useEffect } from 'react'
-import { useRouter } from 'expo-router';
 import { fetchData } from "../api/apiQuery";
 // Import color pallet and icons
 import * as PhosphorIcons from 'phosphor-react-native';
 import colors from '@/constants/colors'
-import data from '@/components/testData'
+// import dailyData from '@/components/testData'
 // Import Victory components for charts
-import { VictoryChart, VictoryLine, VictoryArea, VictoryAxis, VictoryScatter, VictoryTheme } from 'victory-native';
+import { VictoryChart, VictoryLine, VictoryArea, VictoryAxis, VictoryScatter } from 'victory-native';
 
 const totalChickens = 24;
 
 const analytics = () => {
+  // import data from database
+  const userId = 6
+  const endpointDaily = `user/images/hourly?userId=${userId}`
+  const [dailyData, setDailyData] = useState(null)
+  const [isLoading, setIsLoading] = useState(true)
+
   // Find the last non-empty (non-zero) chickenCount value, but only in the displayed half of the data
-  const displayedLength = Math.ceil(data.length / 2);
-  const defaultIndex = (() => {
-    for (let i = displayedLength - 1; i >= 0; i--) {
-      if (data[i].chickenCount && data[i].chickenCount !== 0) return i;
+  const displayedLength = dailyData ? Math.ceil(dailyData.length / 2) : 0;
+  const defaultIndex = React.useMemo(() => {
+    if (dailyData) {
+      for (let i = displayedLength - 1; i >= 0; i--) {
+        if (dailyData[i].chickenCount && dailyData[i].chickenCount !== 0) return i;
+      }
     }
     return 0;
-  })();
+  }, [dailyData]);
 
-  const [timePeriod, setTimePeriod] = useState('AM')
-  // selected index
+  const [timePeriod, setTimePeriod] = useState('AM');
   const [selectedIndex, setSelectedIndex] = useState(defaultIndex);
-
-  // cuts data into am and pm sections
-  const [displayedData, setDisplayedData] = useState(data.slice(0,12)) 
+  const [displayedData, setDisplayedData] = useState([]);
   const selectedPoint = displayedData[selectedIndex];
   
 
+  useEffect(() => {
+    handleSearch()
+  }, [])
 
   useEffect(() => {
-    if (timePeriod == 'AM') {
-      setDisplayedData(data.slice(0, 12))
-    } else {
-      setDisplayedData(data.slice(12, 24))
+    if (dailyData) {    
+    setIsLoading(false)
     }
-  }, [timePeriod])
+  }, [dailyData])
+  
+  useEffect(() => {
+    if (dailyData) {
+      if (timePeriod == 'AM') {
+        setDisplayedData(dailyData.slice(0, 12))
+      } else {
+        setDisplayedData(dailyData.slice(12, 24))
+      }
+    }
+  }, [timePeriod, dailyData])
+
+  const handleSearch = async () => {
+    try {
+      const resultDaily = await fetchData(endpointDaily);
+      setDailyData(resultDaily)
+    }
+    catch (error) {
+      throw error
+    }
+  }
 
   // format time for header
   let hour = 0;
-  if (selectedPoint.time !== undefined) {
+  if (selectedPoint && selectedPoint.time !== undefined) {
       hour = Number(selectedPoint.time.split(':')[0])
     if (hour === 0) {
       hour = 12;
@@ -60,14 +85,27 @@ const analytics = () => {
     const idx = Math.round((locationX - 40) / step);
     setSelectedIndex(Math.max(0, Math.min(displayedData.length - 1, idx)));
   };
-
+  
+  // Return null while loading
+  if (isLoading || dailyData.detail == 'Not Found' || dailyData.length != 24) {
+    return null;
+  }
+  
   // dynamically calculate average, min, max, and certainty
-  const avg = selectedPoint.chickenCount 
-  const min = displayedData.reduce((min, point) => point.chickenCount < min ? point.chickenCount : min, Infinity) 
-  const max = displayedData.reduce((max, point) => point.chickenCount > max ? point.chickenCount : max, -Infinity) 
-  const certainty = selectedPoint.certainty 
+  let avg = 0;
+  let min = 0;
+  let max = 0;
+  let certainty = 0;
+  
+  if (dailyData && selectedPoint) {
+    avg = selectedPoint.chickenCount;
+    min = displayedData.reduce((min, point) => point.chickenCount < min ? point.chickenCount : min, Infinity);
+    max = displayedData.reduce((max, point) => point.chickenCount > max ? point.chickenCount : max, -Infinity);
+    certainty = selectedPoint.certainty || 0;
+  }
 
   return (
+
     // Main container
     <View style={{ flex: 1, marginTop: 2 }}>
 
@@ -84,8 +122,6 @@ const analytics = () => {
         >
           <PhosphorIcons.Swap size={20} style={styles.swapIcon}/>
         </Pressable></Text>
-        
-          
 
         {/* Quick info displays */}
         <View style={styles.allQuickInfoContainer}>
@@ -212,6 +248,8 @@ const analytics = () => {
     </View>
   );
 }
+
+
 
 export default analytics
 

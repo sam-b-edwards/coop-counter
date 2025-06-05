@@ -9,7 +9,7 @@ import * as PhosphorIcons from 'phosphor-react-native';
 const profile = () => {
 
   const [data, setData] = useState(null)
-  const id = 1
+  const id = 6
   const endpoint = `user/info?userId=${id}`
 
   useEffect(() => {

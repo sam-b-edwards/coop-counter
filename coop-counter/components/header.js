@@ -9,7 +9,7 @@ import colors from '@/constants/colors'
 const header = () => {
 
     const [data, setData] = useState(null)
-    const id = 1
+    const id = 6
     const endpoint = `user/info?userId=${id}`
 
     useEffect(() => {

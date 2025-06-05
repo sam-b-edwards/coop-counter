@@ -8,7 +8,7 @@ import colors from '@/constants/colors'
 
 const scan = () => {
     const [data, setData] = useState(null)
-    const id = 1
+    const id = 6
     const endpoint = `user/images/latest?userId=${id}`
 
     useEffect(() => {

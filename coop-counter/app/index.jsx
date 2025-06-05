@@ -8,7 +8,7 @@ import * as PhosphorIcons from 'phosphor-react-native';
 import colors from '@/constants/colors'
 
 const index = () => {
-  const userId = 1
+  const userId = 6
   const endpointLatest = `user/images/latest?userId=${userId}`
   const endpointUser = `user/info?userId=${userId}`
   const [latestData, setLatestData] = useState(null)
