@@ -124,32 +124,34 @@ def get_images_hourly(userId: int = Query(...)):
 
     now = datetime.now()
     since = now - timedelta(hours=24)
+
     cursor.execute(
-        """
-        SELECT 
-            HOUR(uploaded_at) AS hour,
-            AVG(chickenCount) AS avg_count,
-            AVG(certainty) AS avg_certainty
-        FROM images
-        WHERE userId = %s
-          AND chickenCount IS NOT NULL
-          AND certainty IS NOT NULL
-          AND uploaded_at >= %s
-        GROUP BY HOUR(uploaded_at)
-        ORDER BY hour ASC
-        """, (userId, since))
-    rows = cursor.fetchall()
-    db.commit()
+        "SELECT HOUR(uploaded_at) AS hour, AVG(chickenCount) AS avg_count, AVG(certainty) AS avg_certainty "
+        "FROM images WHERE userId = %s AND chickenCount IS NOT NULL AND certainty IS NOT NULL "
+        "AND uploaded_at >= %s GROUP BY HOUR(uploaded_at) ORDER BY hour ASC",
+        (userId, since)
+    )
+    db_rows = cursor.fetchall()
     cursor.close()
     db.close()
-    if not rows:
-        return JSONResponse(content={"error": "No images found for this user"}, status_code=404)
-    result = [
-        {
-            "chickenCount": round(row["avg_count"], 2),
-            "certainty": round(row["avg_certainty"], 2),
-            "time": f"{row['hour']:02}:00:00"
-        }
-        for row in rows
-    ]
+
+    hourly_data = {row["hour"]: row for row in db_rows}
+    
+    
+    result = []
+    for h in range(24):
+        if h in hourly_data:
+            row = hourly_data[h]
+            result.append({
+                "chickenCount": round(row["avg_count"], 2),
+                "certainty": round(row["avg_certainty"], 2),
+                "time": f"{h:02}:00:00"
+            })
+        else:
+            result.append({
+                "chickenCount": 0,
+                "certainty": 0,
+                "time": f"{h:02}:00:00"
+            })
+
     return result
