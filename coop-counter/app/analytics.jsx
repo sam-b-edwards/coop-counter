@@ -10,7 +10,6 @@ import DailyGraph from '@/components/dailyGraph'
 const totalChickens = 24;
 
 const analytics = () => {
-  
   return (
     // Main container
     <View style={{ flex: 1, marginTop: 2 }}>
@@ -19,7 +18,8 @@ const analytics = () => {
   );
 }
 
-
-
 export default analytics
 
+const styles = StyleSheet.create({
+  hourlyGraph
+})
