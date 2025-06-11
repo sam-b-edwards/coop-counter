@@ -127,7 +127,7 @@ def get_images_hourly(userId: int = Query(...)):
 
     cursor.execute(
         "SELECT HOUR(uploaded_at) AS hour, AVG(chickenCount) AS avg_count, AVG(certainty) AS avg_certainty "
-        "FROM images WHERE userId = %s AND chickenCount IS NOT NULL AND certainty IS NOT NULL "
+         "FROM images WHERE userId = %s AND chickenCount IS NOT NULL AND certainty IS NOT NULL "
         "AND uploaded_at >= %s GROUP BY HOUR(uploaded_at) ORDER BY hour ASC",
         (userId, since)
     )
@@ -143,8 +143,8 @@ def get_images_hourly(userId: int = Query(...)):
         if h in hourly_data:
             row = hourly_data[h]
             result.append({
-                "chickenCount": round(row["avg_count"], 2),
-                "certainty": round(row["avg_certainty"], 2),
+                "chickenCount": round(row["avg_count"]),
+                "certainty": round(row["avg_certainty"]),
                 "time": f"{h:02}:00:00"
             })
         else:
