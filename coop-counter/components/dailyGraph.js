@@ -10,7 +10,7 @@ import testData from '@/components/testData'
 import { VictoryChart, VictoryLine, VictoryArea, VictoryAxis, VictoryScatter } from 'victory-native';
 
 const totalChickens = 24
-const useRealData = false
+const useRealData = true
 
 const dailyGraph = () => {
   // State management

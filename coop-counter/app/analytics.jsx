@@ -21,5 +21,5 @@ const analytics = () => {
 export default analytics
 
 const styles = StyleSheet.create({
-  hourlyGraph
+  
 })
