@@ -9,8 +9,12 @@ import testData from '@/components/testData'
 // Import Victory components for charts
 import { VictoryChart, VictoryLine, VictoryArea, VictoryAxis, VictoryScatter } from 'victory-native';
 
-const totalChickens = 24
+
 const useRealData = true
+
+if (!useRealData) {
+  totalChickens = 24
+}
 
 const dailyGraph = () => {
   // State management
@@ -41,7 +45,11 @@ const dailyGraph = () => {
           const userId = 6;
           const endpointDaily = `user/images/hourly?userId=${userId}`;
           const resultDaily = await fetchData(endpointDaily);
+          const endpointUser = `user/info?userId=${userId}`;
+          const resultUser = await fetchData(endpointUser);
+
           setDailyData(resultDaily);
+          totalChickens = resultUser?.totalChickens
         } catch (error) {
           console.error('Failed to fetch data:', error);
         }
@@ -147,8 +155,8 @@ const dailyGraph = () => {
           {/* Graph for daily data */}
           <VictoryChart
             height={200}
-            padding={{ top: 20, bottom: 40, left: 40, right:20 }}
-            domain={{ x: [1, 12], y: [0, totalChickens + 0.5] }}
+            padding={{ top: 20, bottom: 40, left: 20 + 10 * String(totalChickens/2).length, right: 20 }}
+            domain={{ x: [1, 12], y: [0, totalChickens] }}
           >
 
             {/* x axis */}

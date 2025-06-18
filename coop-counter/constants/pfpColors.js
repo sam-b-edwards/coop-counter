@@ -1,4 +1,4 @@
-// pfp colors list
+// pfp colors list (not used in app)
 
 const pfpColors = [
     '#FE6F5E',

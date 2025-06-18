@@ -18,7 +18,6 @@ const header = () => {
 
     useEffect(() => {
         if (data !== null){
-            console.log('userInfo: ', data)
             try {
                 setName(data.name.split(' ')[0])
             }

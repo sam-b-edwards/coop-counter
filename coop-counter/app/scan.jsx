@@ -17,7 +17,6 @@ const scan = () => {
 
     useEffect(() => {
         if (data !== null){
-            console.log('userInfo: ', data)
             setLastScanImage(data.original_url)
             
         }

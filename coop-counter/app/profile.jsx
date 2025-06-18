@@ -18,7 +18,6 @@ const profile = () => {
 
   useEffect(() => {
       if (data !== null){
-          console.log('userInfo: ', data)
           setName(data.name)
           setEmail(data.email)
       }

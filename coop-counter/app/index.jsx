@@ -16,6 +16,7 @@ const index = () => {
 
   useEffect(() => {
     handleSearch()
+    
   }, [])
 
   useEffect(() => {
@@ -31,21 +32,28 @@ const index = () => {
 
   useEffect(() => {
     if (latestData !== null) {
-      console.log('lastScan:', latestData)
       try {
       setCount(latestData.chickenCount)
       setCertainty(latestData.certainty)
-      const [datePart, timePart] = latestData.ai_predicted_at.split('T');
-      var [hour, minute] = timePart.split(':');
-      var timeframe = ''
-      if (Number(hour) > 12) {
-        hour = Number(hour) - 12
-        timeframe = 'PM'
+
+      const timestamp = latestData.ai_predicted_at.split('T')
+      const date = timestamp[0].split('-')
+      const time = timestamp[1].split(':')
+
+      const event = new Date(date[0], date[1] - 1, date[2], time[0], time[1], time[2])
+      const formattedTimestamp = event.toLocaleString("UTC", {timezone: 'UTC'}).split(', ')
+      const displayedTime = [0,1].map(index => formattedTimestamp[1].split(':')[index]).join(':') + ' ' + formattedTimestamp[1].split(' ')[1]
+
+      const currentDate = new Date().toLocaleString("UTC", {timezone: 'UTC'}).split(', ')[0]
+
+      if (formattedTimestamp[0] == currentDate) {
+        setLastScan(`Today ${displayedTime}`)
       } else {
-        Number(hour) == 0 ? hour = 12 : hour = Number(hour)
-        timeframe = 'AM'
+        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+        dateMonth = monthNames[formattedTimestamp[0].split('/')[0]-1]
+        setLastScan(`${dateMonth} ${formattedTimestamp[0].split('/')[1]}, ${displayedTime}`)
       }
-      setLastScan(`Today at ${hour}:${minute} ${timeframe}`)
+
       setLastScanImage(latestData.original_url)
       }
 
