@@ -173,3 +173,80 @@ def get_images_hourly(userId: int = Query(...), date: str = Query(None)):
             })
 
     return result
+
+@app.get("/user/images/weekly")
+# get the weekly average chicken count and certainty for a user
+def get_images_weekly(userId: int = Query(...), date: str = Query(None)):
+    # get the database connection
+    db = get_db()
+    # get the cursor
+    cursor = db.cursor(dictionary=True)
+
+    # if a date is provided, use it to get the weekly average
+    if date:
+        try:
+            # convert the date string to a datetime object
+            date_obj = datetime.strptime(date, "%Y-%m-%d")
+        # if the date is invalid, return an error
+        except ValueError:
+            # close the cursor and database connection
+            cursor.close()
+            db.close()
+            # return an error
+            return JSONResponse(content={"error": "Invalid date format. Use YYYY-MM-DD."}, status_code=400)
+        # get the start of the week
+        since = date_obj - timedelta(days=date_obj.weekday())
+        # set the time to the start of the day
+        since = datetime.combine(since, datetime.min.time())
+        # get the end of the week
+        until = since + timedelta(days=7)
+    # if no date is provided, get the current week
+    else:
+        # get the current date
+        until = datetime.now()
+        # get the start of the week
+        since = until - timedelta(days=until.weekday())
+        # set the time to the start of the day
+        since = datetime.combine(since, datetime.min.time())
+    # get the weekly average
+    cursor.execute(
+        "SELECT DATE(uploaded_at) AS date, AVG(chickenCount) AS avg_count, AVG(certainty) AS avg_certainty "
+        "FROM images WHERE userId = %s AND chickenCount IS NOT NULL AND certainty IS NOT NULL "
+        "AND uploaded_at >= %s AND uploaded_at < %s GROUP BY DATE(uploaded_at) ORDER BY date ASC",
+        (userId, since, until)
+    )
+    # get the database rows
+    db_rows = cursor.fetchall()
+    # close the cursor and database connection
+    cursor.close()
+    db.close()
+
+    # create a dictionary with the database results
+    daily_data = {row["date"].strftime("%Y-%m-%d"): row for row in db_rows}
+
+    # create a list to store the results
+    result = []
+    current_date = since
+    # Generate entries for each day of the week
+    while current_date < until:
+        date_str = current_date.strftime("%Y-%m-%d")
+        if date_str in daily_data:
+            row = daily_data[date_str]
+            result.append({
+                "chickenCount": round(row["avg_count"]),
+                "certainty": round(row["avg_certainty"]),
+                "date": date_str,
+                "dayOfWeek": current_date.strftime("%A")  # Adds day name (Monday, Tuesday, etc.)
+            })
+        # if the date is not in the database, add a zero entry
+        else:
+            result.append({
+                "chickenCount": 0,
+                "certainty": 0,
+                "date": date_str,
+                "dayOfWeek": current_date.strftime("%A")
+            })
+        # increment the date by one day
+        current_date += timedelta(days=1)
+    # return the results
+    return result
