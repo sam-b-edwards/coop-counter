@@ -1,6 +1,6 @@
 // Basic imports
 import React from 'react';
-import { Tabs } from "expo-router"
+import { Tabs, Stack } from "expo-router"
 import { SafeAreaProvider } from "react-native-safe-area-context";
 // Colour pallete, Icons and header imports
 import colors from '@/constants/colors'
@@ -78,6 +78,7 @@ export default function RootLayout() {
           }}
         />
 
+       
       </Tabs>
     </SafeAreaProvider>
   )

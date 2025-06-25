@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
     fontColor: colors.textPrimary,
   },
   countText: {
-    color: colors.primary,
+    color: colors.primary
   },
 
   // widget styles

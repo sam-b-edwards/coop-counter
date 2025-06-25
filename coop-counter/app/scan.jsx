@@ -1,4 +1,5 @@
 // Basic imports
+import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import { StyleSheet, Text, View, Pressable, Image } from 'react-native'
 import React, {useState, useEffect} from 'react'
 import { fetchData } from "../api/apiQuery";
@@ -7,6 +8,7 @@ import * as PhosphorIcons from 'phosphor-react-native'
 import colors from '@/constants/colors'
 
 const scan = () => {
+
     const [data, setData] = useState(null)
     const id = 6
     const endpoint = `user/images/latest?userId=${id}`
@@ -34,6 +36,9 @@ const scan = () => {
 
   // variables
   const [lastScanImage, setLastScanImage] = useState(null)
+
+
+
   return (
     // main container for scan page (flex 1 to take up all space)
     <View style={{ backgroundColor: colors.backgroundPrimary, flex: 1 }}>
@@ -49,7 +54,7 @@ const scan = () => {
         {/* camera scan button */}
         <Pressable style={styles.useCameraContainer}
           onPress={() => {
-            console.log('use camera')
+            console.log('cam')
           }}
         >
           <PhosphorIcons.Camera color={colors.backgroundPrimary} size={40} weight={'regular'}/>

@@ -12,16 +12,13 @@ import { VictoryChart, VictoryLine, VictoryArea, VictoryAxis, VictoryScatter } f
 
 const useRealData = true
 
-if (!useRealData) {
-  totalChickens = 24
-}
-
 const dailyGraph = () => {
   // State management
   const [isLoading, setIsLoading] = useState(true);
   const [dailyData, setDailyData] = useState(null);
   const [timePeriod, setTimePeriod] = useState('AM');
   const [displayedData, setDisplayedData] = useState([]);
+  const [totalChickens, setTotalChickens] = useState(24);
 
   // Calculate defaultIndex based on dailyData
   const displayedLength = dailyData ? Math.ceil(dailyData.length / 2) : 0;
@@ -36,20 +33,28 @@ const dailyGraph = () => {
 
   const [selectedIndex, setSelectedIndex] = useState(defaultIndex);
   const selectedPoint = displayedData[selectedIndex];
+  
+  const userId = 6;
+  
+
+  const [date, setDate] = useState(new Date())
+  const currentDate = `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}`
+  const [queryDate, setQueryDate] = useState(currentDate)
+
+  const changeDate = () => {
+    setDate(new Date(date.setDate(date.getDate() - 1)))
+    setQueryDate(`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`)
+  };
+
 
   // Initial data fetch
   useEffect(() => {
     const fetchInitialData = async () => {
       if (useRealData) {
         try {
-          const userId = 6;
-          const endpointDaily = `user/images/hourly?userId=${userId}`;
-          const resultDaily = await fetchData(endpointDaily);
           const endpointUser = `user/info?userId=${userId}`;
           const resultUser = await fetchData(endpointUser);
-
-          setDailyData(resultDaily);
-          totalChickens = resultUser?.totalChickens
+          setTotalChickens(resultUser?.totalChickens);
         } catch (error) {
           console.error('Failed to fetch data:', error);
         }
@@ -60,6 +65,18 @@ const dailyGraph = () => {
     
     fetchInitialData();
   }, []);
+
+  useEffect(() => {
+    
+    const fetchDailyData = async () => {
+      const endpointDaily = `user/images/hourly?userId=${userId}&date=${queryDate}`;
+      const resultDaily = await fetchData(endpointDaily);
+      setDailyData(resultDaily);
+    };
+    fetchDailyData();
+  }, [queryDate]);
+
+  
 
   // Update loading state when data changes
   useEffect(() => {
@@ -110,15 +127,24 @@ const dailyGraph = () => {
     point.chickenCount > max ? point.chickenCount : max, -Infinity) || 0;
   const certainty = selectedPoint?.certainty || 0;
 
+  
+
   return (
     
       <View style={styles.displayBox}>
-
-        {/* Heading */}
-        <Text style={styles.headingText}>Today</Text>
-        <Text style={styles.timeValue}>{hour} <Text style={styles.ampm}>{timePeriod}</Text>
-        <Pressable
-          onPress={() => {
+          <Text style={styles.headingText}>
+            {queryDate === currentDate
+              ? 'Today'
+              : (() => {
+            const parts = queryDate.split('-');
+            // parts: [year, month, day]
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            return `${monthNames[Number(parts[1]) - 1]} ${parts[2]}`;
+                })()}
+          </Text>
+          <Text style={styles.timeValue}>{hour} <Text style={styles.ampm}>{timePeriod}</Text>
+          <Pressable
+            onPress={() => {
             setTimePeriod(timePeriod == 'AM' ? 'PM' : 'AM')
           }}
         >
@@ -244,6 +270,9 @@ const dailyGraph = () => {
             />
           </View>
         </View>
+        <Pressable onPress={changeDate}>
+          <Text>Swap date</Text>
+        </Pressable>
       </View>
   )
 

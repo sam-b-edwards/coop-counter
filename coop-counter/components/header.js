@@ -78,6 +78,7 @@ const styles = StyleSheet.create({
     pfp: {
         height: 50,
         width: 50,
+        borderRadius: 100,
     },
     nameContainer: {
         flexDirection: 'row',
