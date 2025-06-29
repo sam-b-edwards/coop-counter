@@ -1,7 +1,7 @@
 // Basic imports
 import React from 'react';
 import { Tabs, Stack } from "expo-router"
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 // Colour pallete, Icons and header imports
 import colors from '@/constants/colors'
 import * as PhosphorIcons from 'phosphor-react-native';
@@ -15,18 +15,19 @@ export default function RootLayout() {
   return (
     // Safe area provider to keep everything within confines of the screen
     <SafeAreaProvider>
-      {/* Header import as it is used on every page */}
-      <Header/>
-      
-      <Tabs
-      // Styling for the tab bar
+      <SafeAreaView style={{ flex: 1, backgroundColor: colors.backgroundPrimary }}>
+        {/* Header import as it is used on every page */}
+        <Header/>
+
+        <Tabs
+        // Styling for the tab bar
         screenOptions={{
           tabBarActiveTintColor: colors.primary,
           tabBarInactiveTintColor: colors.gray,
           tabBarStyle: {
             boxShadow: '0px -2px 4px #00000025',
             height: 70,
-            alignItems: 'center',
+            paddingTop: 10,
             flexDirection: 'row',
           },
           tabBarLabelStyle: {
@@ -80,6 +81,7 @@ export default function RootLayout() {
 
        
       </Tabs>
+      </SafeAreaView>
     </SafeAreaProvider>
   )
 }

@@ -12,24 +12,23 @@ import { VictoryChart, VictoryLine, VictoryArea, VictoryAxis, VictoryScatter } f
 
 const useRealData = true
 
-const dailyGraph = () => {
+const weeklyGraph = () => {
   // State management
   const [isLoading, setIsLoading] = useState(true);
-  const [dailyData, setDailyData] = useState(null);
-  const [timePeriod, setTimePeriod] = useState('AM');
+  const [weeklyData, setWeeklyData] = useState(null);
   const [displayedData, setDisplayedData] = useState([]);
   const [totalChickens, setTotalChickens] = useState(24);
 
-  // Calculate defaultIndex based on dailyData
-  const displayedLength = dailyData ? Math.ceil(dailyData.length / 2) : 0;
+  // Calculate defaultIndex based on weeklyData
+  const displayedLength = weeklyData ? Math.ceil(weeklyData.length / 2) : 0;
   const defaultIndex = React.useMemo(() => {
-    if (dailyData) {
+    if (weeklyData) {
       for (let i = displayedLength - 1; i >= 0; i--) {
-        if (dailyData[i]?.chickenCount && dailyData[i].chickenCount !== 0) return i;
+        if (weeklyData[i]?.chickenCount && weeklyData[i].chickenCount !== 0) return i;
       }
     }
     return 0;
-  }, [dailyData]);
+  }, [weeklyData]);
 
   const [selectedIndex, setSelectedIndex] = useState(defaultIndex);
   const selectedPoint = displayedData[selectedIndex];
@@ -65,7 +64,7 @@ const dailyGraph = () => {
           console.error('Failed to fetch data:', error);
         }
       } else {
-        setDailyData(testData);
+        setWeeklyData(testData);
       }
     };
     
@@ -74,46 +73,28 @@ const dailyGraph = () => {
 
   useEffect(() => {
     
-    const fetchDailyData = async () => {
-      const endpointDaily = `user/images/hourly?userId=${userId}&date=${queryDate}`;
-      const resultDaily = await fetchData(endpointDaily);
-      setDailyData(resultDaily);
+    const fetchWeeklyData = async () => {
+      const endpointWeekly = `user/images/weekly?userId=${userId}&date=${queryDate}`;
+      const resultWeekly = await fetchData(endpointWeekly);
+      setWeeklyData(resultWeekly);
+      console.log(resultWeekly);
     };
-    fetchDailyData();
+    fetchWeeklyData();
+    
   }, [queryDate]);
 
   
 
   // Update loading state when data changes
   useEffect(() => {
-    if (dailyData) {
+    if (weeklyData) {
       setIsLoading(false);
     }
-  }, [dailyData]);
-
-  // Update displayed data when time period changes
-  useEffect(() => {
-    if (dailyData) {
-      const start = timePeriod === 'AM' ? 0 : 12;
-      setDisplayedData(dailyData.slice(start, start + 12));
-    }
-  }, [timePeriod, dailyData]);
+  }, [weeklyData]);
 
   // Return early if loading or invalid data
-  if (isLoading || !dailyData || dailyData.detail === 'Not Found' || dailyData.length !== 24) {
+  if (isLoading || !weeklyData || weeklyData.detail === 'Not Found' || weeklyData.length !== 24) {
     return null;
-  }
-
-  // Format time for header
-  let hour = 0;
-  if (selectedPoint?.time) {
-    hour = Number(selectedPoint.time.split(':')[0]);
-    if (hour === 0) {
-      hour = 12;
-    } else if (hour > 12) {
-      hour = hour - 12;
-    }
-    hour = hour.toString() + ':00';
   }
 
   // Chart interaction handler
@@ -139,12 +120,12 @@ const dailyGraph = () => {
     
       <View style={styles.displayBox}>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20 }}>
-          <Pressable onPress={() => changeDate(-1)}>
+          <Pressable onPress={() => changeDate(-7)}>
             <PhosphorIcons.CaretLeft/>
           </Pressable>
             <Text style={styles.headingText}>
               {queryDate === currentDate
-                ? 'Today'
+                ? 'This Week'
                 : (() => {
               const parts = queryDate.split('-');
               // parts: [year, month, day]
@@ -152,18 +133,10 @@ const dailyGraph = () => {
               return `${monthNames[Number(parts[1]) - 1]} ${parts[2]}`;
                   })()}
             </Text>
-            <Pressable onPress={() => changeDate(1)}>
+            <Pressable onPress={() => changeDate(7)}>
             <PhosphorIcons.CaretRight/>
           </Pressable>
         </View>
-          <Text style={styles.timeValue}>{hour} <Text style={styles.ampm}>{timePeriod}</Text>
-          <Pressable
-            onPress={() => {
-            setTimePeriod(timePeriod == 'AM' ? 'PM' : 'AM')
-          }}
-        >
-          <PhosphorIcons.Swap size={20} style={styles.swapIcon}/>
-        </Pressable></Text>
 
         {/* Quick info displays */}
         <View style={styles.allQuickInfoContainer}>
@@ -192,11 +165,11 @@ const dailyGraph = () => {
 
           <View style={{ position: 'relative' }}>
 
-          {/* Graph for daily data */}
+          {/* Graph for weekly data */}
           <VictoryChart
             height={200}
             padding={{ top: 20, bottom: 40, left: 20 + 10 * String(totalChickens/2).length, right: 20 }}
-            domain={{ x: [1, 12], y: [0, totalChickens] }}
+            domain={{ x: [1, 7], y: [0, totalChickens] }}
           >
 
             {/* x axis */}
@@ -205,9 +178,6 @@ const dailyGraph = () => {
                 ticks: { stroke: '#ddd', size: 5 },
                 tickLabels: { fontSize: 14, fill: colors.textSecondary, padding: 8 }
               }}
-              tickFormat={(t) => [0, 3, 6, 9].includes(Number(t.split(':')[0])) ? Number(t.split(':')[0]) == 0 ? `12` : `${Number(t.split(':')[0])}` : ''
-              || [12, 15, 18, 21].includes(Number(t.split(':')[0])) ? Number(t.split(':')[0]) == 12 ? `12` : `${Number(t.split(':')[0]) - 12}` : ''
-            }
             />
 
             {/* y axis */}
@@ -224,7 +194,7 @@ const dailyGraph = () => {
             {/* area under the line on the graph */}
             <VictoryArea
               data={displayedData}
-              x="time"
+              x="dayOfWeek"
               y="chickenCount"
               style={{
                 data: {
@@ -236,7 +206,7 @@ const dailyGraph = () => {
             {/* line on the graph */}
             <VictoryLine
               data={displayedData}
-              x="time"
+              x="dayOfWeek"
               y="chickenCount"
               style={{ data: { stroke: colors.primary, strokeWidth: 1 } }}
             />
@@ -244,7 +214,7 @@ const dailyGraph = () => {
             {/* dots on the graph */}
             <VictoryScatter
               data={displayedData}
-              x="time"
+              x="dayOfWeek"
               y="chickenCount"
               size={4}
               style={{
@@ -259,10 +229,10 @@ const dailyGraph = () => {
             {selectedIndex !== null && (
               <VictoryLine
                 data={[
-                  { time: displayedData[selectedIndex]?.time, chickenCount: 0 },
-                  { time: displayedData[selectedIndex]?.time, chickenCount: totalChickens}
+                  { dayOfWeek: displayedData[selectedIndex]?.dayOfWeek, chickenCount: 0 },
+                  { dayOfWeek: displayedData[selectedIndex]?.dayOfWeek, chickenCount: totalChickens}
                 ]}
-                x="time"
+                x="dayOfWeek"
                 y="chickenCount"
                 style={{ data: { stroke: colors.primary, strokeWidth: 1.5, strokeDasharray: '4,2' } }}
               />
@@ -292,7 +262,7 @@ const dailyGraph = () => {
 
 
 
-export default dailyGraph
+export default weeklyGraph
 
 const styles = StyleSheet.create({
   displayBox: { 
