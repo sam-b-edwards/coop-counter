@@ -203,7 +203,12 @@ const dailyGraph = () => {
             <VictoryAxis
               style={{
                 ticks: { stroke: '#ddd', size: 5 },
-                tickLabels: { fontSize: 14, fill: colors.textSecondary, padding: 8 }
+                tickLabels: { 
+                  fontSize: 14, 
+                  fill: colors.textSecondary, 
+                  padding: 8,
+                  fontFamily: 'System'
+                }
               }}
               tickFormat={(t) => [0, 3, 6, 9].includes(Number(t.split(':')[0])) ? Number(t.split(':')[0]) == 0 ? `12` : `${Number(t.split(':')[0])}` : ''
               || [12, 15, 18, 21].includes(Number(t.split(':')[0])) ? Number(t.split(':')[0]) == 12 ? `12` : `${Number(t.split(':')[0]) - 12}` : ''
@@ -216,7 +221,7 @@ const dailyGraph = () => {
               style={{
                 axis: { stroke: '#00000000' },
                 grid: { stroke: colors.backgroundSecondary },
-                tickLabels: { fontSize: 14, fill: colors.textSecondary, padding: 20 }
+                tickLabels: { fontSize: 14, fill: colors.textSecondary, padding: 20, fontFamily: 'System' }
               }}
               tickValues={[0, totalChickens / 2, totalChickens]}
             />

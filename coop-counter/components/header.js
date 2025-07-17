@@ -38,7 +38,7 @@ const header = () => {
       }
 
     // variables
-    var notifications = 2;
+    var notifications = 1;
     var profileImage = require('@/assets/images/pfp.png')
     const [name, setName] = useState('?')
   return (
