@@ -117,8 +117,8 @@ def get_user_images(userId: int = Query(...)):
 
     return rows
 
-@app.get("/user/images/hourly")
-def get_images_hourly(userId: int = Query(...), date: str = Query(None)):
+@app.get("/user/averages/hourly")
+def get_averages_hourly(userId: int = Query(...), date: str = Query(None)):
     db = get_db()
     cursor = db.cursor(dictionary=True)
 
@@ -174,9 +174,9 @@ def get_images_hourly(userId: int = Query(...), date: str = Query(None)):
 
     return result
 
-@app.get("/user/images/weekly")
+@app.get("/user/averages/weekly")
 # get the weekly average chicken count and certainty for a user
-def get_images_weekly(userId: int = Query(...), date: str = Query(None)):
+def get_averages_weekly(userId: int = Query(...), date: str = Query(None)):
     # get the database connection
     db = get_db()
     # get the cursor
