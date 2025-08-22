@@ -1,5 +1,5 @@
-import { Text, View, Image, Pressable } from "react-native";
-import { useEffect, useState } from "react";
+import { Text, View, Image, Pressable, ScrollView } from "react-native";
+import React, { useEffect, useState } from "react";
 import { ScanIcon, WifiHighIcon, BatteryHighIcon } from "phosphor-react-native";
 import { useRouter } from "expo-router";
 import Loading from '@/components/loading'
@@ -52,46 +52,47 @@ export default function dashboard() {
 
   
   return userData && coopData ? (
-    <View className='flex-1 bg-white items-center px-4'>
-      <Text className='text-3xl tracking-wider'>Chickens Counted</Text>
-      <View className='flex flex-row items-baseline'>
-        <Text className='text-[90px] font-bold text-green-500'>{coopData.chickenCount}</Text>
-        <Text className='text-3xl font-bold text-green-500'>/{userData.totalChickens}</Text>
-      </View>
-      <Text className='text-green-500 text-2xl font-semibold mt-[-16px]'>{coopData.certainty}% Certainty</Text>
-      <Text className='text-lg mt-8'>Last Scan: {lastScan}</Text>
-      <Pressable onPress={() =>router.push('/scan')} className='flex flex-row items-center gap-1'>
-        <Text className='text-lg text-blue-500 mb-2'>Scan Now</Text>
-        <ScanIcon size={22} color="#3b82f6"/>
-      </Pressable>
-      {/* <Image source={{ uri: coopData.original_url }} className="w-full h-1/2" /> */}
-      <View className='w-full h-[30%] rounded-xl overflow-hidden relative my-1 bg-black'>
-        <Image source={{ uri: coopData.original_url }} className="w-full h-full" />
-        <View className="absolute bottom-2 left-4">
-          <Text className='text-white text-xl font-medium'>Coop</Text>
-          <View className='flex flex-row gap-2'>
-            <WifiHighIcon color="white" size={18} />
-            <BatteryHighIcon color="white" size={18} />
-          </View>
+    <ScrollView className='flex-1 bg-white px-4' showsVerticalScrollIndicator={false}>
+      <View className='items-center mb-10'>
+        <Text className='text-3xl tracking-wider mt-4'>Chickens Counted</Text>
+        <View className='flex flex-row items-baseline'>
+          <Text className='text-[90px] font-bold text-green-500'>{coopData.chickenCount}</Text>
+          <Text className='text-3xl font-bold text-green-500'>/{userData.totalChickens}</Text>
         </View>
-      </View>
-      
-      <View className='w-full h-[30%] rounded-xl overflow-hidden relative my-1 bg-slate-500'>
-
-        <Pressable onPress={() => setIsDoorOpen(!isDoorOpen)} className={['relative self-center gap-0 flex flex-row items-center w-[80%] h-28 rounded-full p-4 mt-[10%] border-[1px] border-white shadow', isDoorOpen ? 'bg-gray-600' : 'bg-blue-500'].join(' ')}>
-          <Text className={['absolute text-white text-[42px] font-bold tracking-widest', isDoorOpen ? 'right-6' : 'left-14'].join(' ')}>{isDoorOpen? 'CLOSED' : 'OPEN'}</Text>
-          <View className={['absolute h-20 w-20 bg-white rounded-full', isDoorOpen ? 'left-4' : 'right-4'].join(' ')} />
+        <Text className='text-green-500 text-2xl font-semibold mt-[-16px]'>{coopData.certainty}% Certainty</Text>
+        <Text className='text-lg mt-8'>Last Scan: {lastScan}</Text>
+        <Pressable onPress={() =>router.push('/scan')} className='flex flex-row items-center gap-1'>
+          <Text className='text-lg text-blue-500 mb-2'>Scan Now</Text>
+          <ScanIcon size={22} color="#3b82f6"/>
         </Pressable>
 
-        <View className="absolute bottom-2 left-4">
-          <Text className='text-white text-xl font-medium'>Door Control</Text>
-          <View className='flex flex-row gap-2'>
-            <WifiHighIcon color="white" size={18} />
-            <BatteryHighIcon color="white" size={18} />
+        <View className='w-full h-56 rounded-xl overflow-hidden relative my-1 bg-black'>
+          <Image source={{ uri: coopData.original_url }} className="w-full h-full" />
+          <View className="absolute bottom-2 left-4">
+            <Text className='text-white text-xl font-medium'>Coop</Text>
+            <View className='flex flex-row gap-2'>
+              <WifiHighIcon color="white" size={18} />
+              <BatteryHighIcon color="white" size={18} />
+            </View>
+          </View>
+        </View>
+        
+        <View className='w-full h-56 rounded-xl overflow-hidden relative my-1 bg-slate-500'>
+
+          <Pressable onPress={() => setIsDoorOpen(!isDoorOpen)} className={['relative self-center gap-0 flex flex-row items-center w-[80%] h-28 rounded-full p-4 mt-[10%] border-[1px] border-white shadow', isDoorOpen ? 'bg-gray-600' : 'bg-blue-500'].join(' ')}>
+            <Text className={['absolute text-white text-[42px] font-bold tracking-widest', isDoorOpen ? 'right-6' : 'left-14'].join(' ')}>{isDoorOpen? 'CLOSED' : 'OPEN'}</Text>
+            <View className={['absolute h-20 w-20 bg-white rounded-full', isDoorOpen ? 'left-4' : 'right-4'].join(' ')} />
+          </Pressable>
+
+          <View className="absolute bottom-2 left-4">
+            <Text className='text-white text-xl font-medium'>Door Control</Text>
+            <View className='flex flex-row gap-2'>
+              <WifiHighIcon color="white" size={18} />
+              <BatteryHighIcon color="white" size={18} />
+            </View>
           </View>
         </View>
       </View>
-      
-    </View>
+    </ScrollView>
   ) : (<Loading />)
 }
