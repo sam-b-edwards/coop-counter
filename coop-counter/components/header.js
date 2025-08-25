@@ -38,7 +38,7 @@ const header = () => {
       }
 
     // variables
-    var notifications = 2;
+    var notifications = 1;
     var profileImage = require('@/assets/images/pfp.png')
     const [name, setName] = useState('?')
   return (
@@ -78,6 +78,7 @@ const styles = StyleSheet.create({
     pfp: {
         height: 50,
         width: 50,
+        borderRadius: 100,
     },
     nameContainer: {
         flexDirection: 'row',
