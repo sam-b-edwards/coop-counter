@@ -6,6 +6,7 @@ router = APIRouter()
 
 @router.get("/info")
 def get_user_info(userId: int = Query(...)):
+    
     db = get_db()
     cursor = db.cursor(dictionary=True)
     # Query the database for user information

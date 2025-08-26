@@ -10,6 +10,7 @@ router = APIRouter()
 
 @router.post("/upload")
 async def upload_image(camera_id: str = Form(...), file: UploadFile = File(...)):
+    
     # Generate timestamp filename for uploaded image
     timestamp = datetime.now()
     filename = f"{timestamp.strftime('%Y%m%d-%H%M%S')}_{file.filename}"
