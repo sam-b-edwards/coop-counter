@@ -22,10 +22,6 @@ class Settings(BaseSettings):
     
     # Base URL for serving images
     BASE_URL: str = "http://coopcounter.comdevelopment.com"
-    
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
 
 # Create settings instance
 settings = Settings()
