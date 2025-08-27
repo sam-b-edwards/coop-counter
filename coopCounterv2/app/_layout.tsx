@@ -18,8 +18,7 @@ export default function RootLayout() {
           headerShown: false,
           tabBarStyle: {
             boxShadow: '0px -2px 4px #00000025',
-            paddingTop: 5,
-            marginBottom: -5,
+            paddingTop: 5
           },
           tabBarLabelStyle: {
             fontSize: 12,
