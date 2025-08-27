@@ -35,19 +35,19 @@ export default function dashboard() {
   useEffect(() => {
     if (coopData?.ai_predicted_at) {
       const lastScan = new Date(coopData.ai_predicted_at)
-      const time = lastScan.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      const time = lastScan.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', timeZone: 'utc' })
       const today = new Date()
 
       let preTime = ''
       const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-      if(lastScan.getFullYear() === today.getFullYear() && lastScan.getMonth() === today.getMonth() && lastScan.getDate() === today.getDate()) {
+      if(lastScan.getFullYear()  === today.getFullYear() && lastScan.getMonth() === today.getMonth() && lastScan.getDate() === today.getDate()-1) {
         preTime = 'Today'
       } else {
         preTime = `${months[lastScan.getMonth()]} ${lastScan.getDate()}`
       }
       const displayLastScan = `${preTime}, ${time}`
       setLastScan(displayLastScan)
-    }
+    } 
   }, [coopData])
 
   
