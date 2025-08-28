@@ -7,13 +7,14 @@ import random
 router = APIRouter()
 
 @router.post("/register")
-async def register(
-    email: str,
-    password: str,
-    name: str,
-    totalChickens: int = 0
-):
+async def register(data: dict):
     """Register a new user with hashed password and auto-generated camera ID"""
+    
+    # Turns JSON into dict
+    email = data["email"]
+    password = data["password"]
+    name = data["name"]
+    totalChickens = data.get("totalChickens", 0)  # Default to 0 if not provided
     
     # Connect to database
     db = get_db()
@@ -54,11 +55,12 @@ async def register(
     })
 
 @router.post("/login")
-async def login(
-    email: str,
-    password: str
-):
+async def login(data: dict):
     """Login user and verify password"""
+    
+    # Extract values from dictionary at the top
+    email = data["email"]
+    password = data["password"]
     
     # Connect to database
     db = get_db()
