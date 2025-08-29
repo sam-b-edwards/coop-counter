@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse
 from app.database import get_db
 from app.auth import hash_password, verify_password
+from app.avatar import generate_avatar, get_avatar
 import random
 
 router = APIRouter()
@@ -11,10 +12,12 @@ async def register(data: dict):
     """Register a new user with hashed password and auto-generated camera ID"""
     
     # Turns JSON into dict
-    email = data["email"]
+    # Converts email to lowercase
+    email = data["email"].lower()
     password = data["password"]
     name = data["name"]
-    totalChickens = data.get("totalChickens", 0)  # Default to 0 if not provided
+    # Default to 0 if not provided
+    totalChickens = data.get("totalChickens", 0)
     
     # Connect to database
     db = get_db()
@@ -48,10 +51,14 @@ async def register(data: dict):
     cursor.close()
     db.close()
     
+    # Generate avatar for new user
+    avatar_filename = generate_avatar(name, user_id)
+    
     return JSONResponse(content={
         "message": "User registered successfully",
         "userId": user_id,
-        "cameraId": camera_id
+        "cameraId": camera_id,
+        "avatar": f"/avatars/{avatar_filename}" if avatar_filename else None
     })
 
 @router.post("/login")
@@ -59,7 +66,8 @@ async def login(data: dict):
     """Login user and verify password"""
     
     # Extract values from dictionary at the top
-    email = data["email"]
+    # Converts email to lowercase
+    email = data["email"].lower()
     password = data["password"]
     
     # Connect to database
@@ -83,6 +91,18 @@ async def login(data: dict):
     
     # Remove password from response
     user.pop('password', None)
+    
+    # Get avatar or generate if doesn't exist
+    avatar_filename = get_avatar(user['id'])
+    if not avatar_filename:
+        avatar_filename = generate_avatar(user.get('name', ''), user['id'])
+    
+    # Add avatar info to response
+    if avatar_filename:
+        user['icon'] = avatar_filename
+        user['avatar'] = f"/avatars/{avatar_filename}"
+    else:
+        user['avatar'] = None
     
     return JSONResponse(content={
         "message": "Login successful",

@@ -17,13 +17,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Create directories for uploads and AI predictions if they don't exist
+# Create directories for uploads, AI predictions, and avatars if they don't exist
 os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
 os.makedirs(settings.OUTPUT_DIR, exist_ok=True)
+os.makedirs(settings.AVATAR_DIR, exist_ok=True)
 
 # Mount static file directories to serve images
 app.mount("/output", StaticFiles(directory=settings.OUTPUT_DIR), name="output")
 app.mount("/uploads", StaticFiles(directory=settings.UPLOAD_DIR), name="uploads")
+app.mount("/avatars", StaticFiles(directory=settings.AVATAR_DIR), name="avatars")
 
 # Include routers for different endpoints
 app.include_router(auth.router, prefix="/auth", tags=["authentication"])

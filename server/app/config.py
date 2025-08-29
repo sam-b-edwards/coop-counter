@@ -19,6 +19,7 @@ class Settings(BaseSettings):
     # Upload directories for images
     UPLOAD_DIR: str = "uploads"
     OUTPUT_DIR: str = "runs/detect/predict"
+    AVATAR_DIR: str = "avatars"
     
     # Base URL for serving images
     BASE_URL: str = "http://coopcounter.comdevelopment.com"
