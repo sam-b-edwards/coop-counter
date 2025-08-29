@@ -3,6 +3,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import pfp from '@/assets/images/pfp.png'
 import { CaretDownIcon, BellIcon } from "phosphor-react-native";
 import { useEffect, useState } from "react";
+import * as SecureStore from 'expo-secure-store'
 
 // type decleration
 interface userInfo {
@@ -11,12 +12,26 @@ interface userInfo {
 
 export default function header() {
     const [userData, setUserData] = useState<userInfo>()
+    const [userId, setUserId] = useState<string>()
+    
+    async function getValueFor(key: string) {
+        let result = await SecureStore.getItemAsync(key)
+        if (result) {
+            setUserId(result)
+        } else {
+            setUserId(undefined)
+        }
+    }
+    getValueFor('user')
+
+
     useEffect(() => {
-        const userId = 6
+        if (userId) {
         fetch(`http://coopcounter.comdevelopment.com/user/info?userId=${userId}`)
           .then(res => res.json())
           .then(data => setUserData(data))
-      }, [])
+        }
+      }, [userId])
     return(
         <SafeAreaView className='flex flex-row px-6 pb-4 mb-[-34px] items-center'>
             <Image source={pfp} className='h-14 w-14 rounded-full'/>

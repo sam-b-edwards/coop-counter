@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import { ScanIcon, WifiHighIcon, BatteryHighIcon } from "phosphor-react-native";
 import { useRouter } from "expo-router";
 import Loading from '@/components/loading'
+import * as SecureStore from 'expo-secure-store'
+
 
 interface coopData {
   ai_predicted_at: Date
@@ -21,16 +23,29 @@ export default function dashboard() {
   const [dataError, setDataError] = useState<boolean>(false)
   const [lastScan, setLastScan] = useState<string>('')
   const [isDoorOpen, setIsDoorOpen] = useState<boolean>(false)
+  const [userId, setUserId] = useState<string>()
   let router = useRouter()
+
+  async function getValueFor(key: string) {
+    let result = await SecureStore.getItemAsync(key)
+    if (result) {
+      setUserId(result)
+    } else {
+      setUserId(undefined)
+    }
+  }
+  getValueFor('user')
+
   useEffect(() => {
-    const userId = 6
+    if(userId) {
     fetch(`http://coopcounter.comdevelopment.com/user/images/latest?userId=${userId}`)
       .then(res => res.json())
       .then(data => data.error ? setDataError(true) : setCoopData(data))
     fetch(`http://coopcounter.comdevelopment.com/user/info?userId=${userId}`)
       .then(res => res.json())
       .then(data => data.error ? setDataError(true) : setUserData(data))
-  }, [])
+    }
+  }, [userId])
 
   useEffect(() => {
     if (coopData?.ai_predicted_at) {
@@ -50,7 +65,6 @@ export default function dashboard() {
     } 
   }, [coopData])
 
-  
   return userData && coopData ? (
     <ScrollView className='flex-1 bg-white px-4' showsVerticalScrollIndicator={false}>
       <View className='items-center mb-10'>

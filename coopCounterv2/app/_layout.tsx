@@ -3,9 +3,41 @@ import { Tabs } from "expo-router";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { HouseIcon, ScanIcon, ChartLineIcon, UserCircleIcon } from 'phosphor-react-native'
 import Header from '@/components/header'
+import * as SecureStore from 'expo-secure-store'
+import { useState, useEffect} from 'react'
+import LogIn from '@/components/login';
 
+async function save(key: string, value: number) {
+  await SecureStore.setItemAsync(key, String(value))
+}
+
+async function deleteKey(key: string) {
+  await SecureStore.deleteItemAsync(key)
+}
 
 export default function RootLayout() {
+  const [userId, setUserId] = useState<string>()
+
+  
+
+  // get value for string
+  async function getValueFor(key: string) {
+    let result = await SecureStore.getItemAsync(key)
+    if (result) {
+      setUserId(result)
+    } else {
+      setUserId(undefined)
+    }
+  }
+
+  // deleteKey('user')
+  // save('user', 6)
+  getValueFor('user')
+  if (!userId) return (
+    <SafeAreaProvider>
+      <LogIn checkLoggedIn={() => getValueFor('user')} />
+    </SafeAreaProvider>
+  )
   return (
     <SafeAreaProvider>
       

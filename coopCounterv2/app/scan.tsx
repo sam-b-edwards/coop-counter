@@ -2,6 +2,7 @@ import { View, Text, Image, Pressable } from 'react-native'
 import { SlidersIcon, ScanIcon, CameraIcon, WifiHighIcon, BatteryHighIcon } from 'phosphor-react-native'
 import React, { useEffect, useState } from 'react'
 import Loading from '@/components/loading'
+import * as SecureStore from 'expo-secure-store'
 
 interface coopData{
     original_url: string
