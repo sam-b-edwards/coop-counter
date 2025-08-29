@@ -2,6 +2,9 @@ import bcrypt
 
 # Password hashing function using bcrypt
 def hash_password(password: str) -> str:
+    """
+    Hashes a plain text password using bcrypt
+    """
     
     # Generate salt with 12 rounds by default
     salt = bcrypt.gensalt()
