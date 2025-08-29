@@ -103,7 +103,7 @@ def get_averages_hourly(userId: int = Query(...), date: str = Query(None)):
             return JSONResponse(content={"error": "Invalid date format. Use YYYY-MM-DD."}, status_code=400)
         
         # Get the start and end of the specified date
-        since = datetime.combine(date_obj, datetime.min.time())y
+        since = datetime.combine(date_obj, datetime.min.time())
         until = since + timedelta(days=1)
     else:
         # Get the past 24 hours from now instead
