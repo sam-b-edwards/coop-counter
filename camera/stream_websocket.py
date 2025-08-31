@@ -12,10 +12,10 @@ ID_FILE = '/home/sam/ID.txt'
 # WebSocket server URL
 SERVER_URL = "ws://coopcounter.comdevelopment.com/ws/stream/push"
 # Video stream configuration
-FRAME_WIDTH = 1280
-FRAME_HEIGHT = 720
-FPS = 15
-JPEG_QUALITY = 85
+FRAME_WIDTH = 2304
+FRAME_HEIGHT = 1296
+FPS = 10
+JPEG_QUALITY = 75
 
 async def stream_to_server():
     """
@@ -47,13 +47,13 @@ async def stream_to_server():
     
     # Set camera controls optimized for NoIR sensor
     controls = {
-        "Saturation": 1.5,
-        "Contrast": 1.4,
+        "Saturation": 1.2,
+        "Contrast": 1.2,
         "Brightness": 0.0,
-        "Sharpness": 1.3,
+        "Sharpness": 1.1,
         "AwbMode": 0,
-        "ExposureValue": 0.2,
-        "ColourGains": (1.9, 1.5),
+        "ExposureValue": 0.0,
+        "ColourGains": (1.2, 1.9),
     }
     # Apply controls to camera
     picam.set_controls(controls)
