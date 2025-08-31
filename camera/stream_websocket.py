@@ -107,6 +107,21 @@ async def stream_to_server():
 
                 # loops to stream frames continuously
                 while True:
+                    # try and expects to receive ping and send pong back and handle errors
+                    try:
+                        message = await asyncio.wait_for(websocket.recv(), timeout=0.001)
+                        msg_data = json.loads(message)
+                        if msg_data.get("type") == "ping":
+                            await websocket.send(json.dumps({"type": "pong"}))
+                    # handle timeout errors
+                    except asyncio.TimeoutError:
+                        # No message received, continue
+                        pass
+                    # handle other errors
+                    except:
+                        # Ignore other errors, continue
+                        pass
+                    
                     # Frame timing start
                     frame_start = time.time()
                     
