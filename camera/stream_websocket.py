@@ -47,14 +47,13 @@ async def stream_to_server():
     
     # Set camera controls optimized for NoIR sensor
     controls = {
-        "Saturation": 1.0,
-        "Contrast": 1.1,
-        "Brightness": 0.1,
-        "Sharpness": 1.2,
-        "AwbMode": 1,
-        "ExposureValue": 0.0,
-        "AeEnable": True,
-        "AwbEnable": True,
+        "Saturation": 1.5,
+        "Contrast": 1.4,
+        "Brightness": 0.0,
+        "Sharpness": 1.3,
+        "AwbMode": 0,
+        "ExposureValue": 0.2,
+        "ColourGains": (1.9, 1.5),
     }
     # Apply controls to camera
     picam.set_controls(controls)

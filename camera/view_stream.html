@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chicken Coop Camera Stream - Camera 1009</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 30px;
+            max-width: 800px;
+            width: 100%;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .stream-container {
+            position: relative;
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+            aspect-ratio: 4/3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #stream {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        .no-stream {
+            color: white;
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .status-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .status-item {
+            background: #f7f7f7;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .status-label {
+            color: #666;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .status-value {
+            color: #333;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        
+        .status-indicator.connected {
+            background: #4caf50;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-indicator.disconnected {
+            background: #f44336;
+        }
+        
+        .status-indicator.connecting {
+            background: #ff9800;
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+        
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .log {
+            background: #f5f5f5;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 20px;
+            max-height: 150px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            background: white;
+            border-radius: 4px;
+        }
+        
+        .camera-info {
+            text-align: center;
+            color: #666;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🐔 Chicken Coop Live Stream</h1>
+        <div class="camera-info">
+            Camera ID: 1009 | User ID: 6
+        </div>
+        
+        <div class="stream-container">
+            <img id="stream" style="display: none;">
+            <div id="no-stream" class="no-stream">
+                <div style="font-size: 48px; margin-bottom: 20px;">📹</div>
+                <div id="stream-message">Connecting to camera...</div>
+            </div>
+        </div>
+        
+        <div class="status-bar">
+            <div class="status-item">
+                <div class="status-label">Connection</div>
+                <div class="status-value">
+                    <span id="connection-indicator" class="status-indicator connecting"></span>
+                    <span id="connection-status">Connecting</span>
+                </div>
+            </div>
+            
+            <div class="status-item">
+                <div class="status-label">Stream Status</div>
+                <div class="status-value" id="stream-status">Waiting...</div>
+            </div>
+            
+            <div class="status-item">
+                <div class="status-label">FPS</div>
+                <div class="status-value" id="fps">0</div>
+            </div>
+            
+            <div class="status-item">
+                <div class="status-label">Frames Received</div>
+                <div class="status-value" id="frame-count">0</div>
+            </div>
+            
+            <div class="status-item">
+                <div class="status-label">Buffer Size</div>
+                <div class="status-value" id="buffer-size">0</div>
+            </div>
+            
+            <div class="status-item">
+                <div class="status-label">Uptime</div>
+                <div class="status-value" id="uptime">00:00</div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button id="connect-btn" onclick="connect()">Connect</button>
+            <button id="disconnect-btn" onclick="disconnect()" disabled>Disconnect</button>
+            <button onclick="clearLog()">Clear Log</button>
+            <button onclick="checkStatus()">Check Status</button>
+        </div>
+        
+        <div class="log" id="log">
+            <div class="log-entry">Ready to connect to stream...</div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const CAMERA_ID = '1009';
+        const USER_ID = '6';
+        const WS_URL = `r`;
+        const STATUS_URL = `http://coopcounter.comdevelopment.com/ws/stream/status/${CAMERA_ID}?user_id=${USER_ID}`;
+        
+        // State
+        let ws = null;
+        let frameCount = 0;
+        let startTime = null;
+        let lastFrameTime = null;
+        let uptimeInterval = null;
+        
+        // Elements
+        const streamImg = document.getElementById('stream');
+        const noStreamDiv = document.getElementById('no-stream');
+        const streamMessage = document.getElementById('stream-message');
+        const connectionStatus = document.getElementById('connection-status');
+        const connectionIndicator = document.getElementById('connection-indicator');
+        const streamStatus = document.getElementById('stream-status');
+        const fpsElement = document.getElementById('fps');
+        const frameCountElement = document.getElementById('frame-count');
+        const bufferSizeElement = document.getElementById('buffer-size');
+        const uptimeElement = document.getElementById('uptime');
+        const logDiv = document.getElementById('log');
+        const connectBtn = document.getElementById('connect-btn');
+        const disconnectBtn = document.getElementById('disconnect-btn');
+        
+        function log(message) {
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+            
+            // Keep only last 50 entries
+            while (logDiv.children.length > 50) {
+                logDiv.removeChild(logDiv.firstChild);
+            }
+        }
+        
+        function updateUptime() {
+            if (!startTime) return;
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            uptimeElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        function connect() {
+            if (ws) {
+                log('Already connected');
+                return;
+            }
+            
+            log(`Connecting to WebSocket: ${WS_URL}`);
+            connectionStatus.textContent = 'Connecting';
+            connectionIndicator.className = 'status-indicator connecting';
+            connectBtn.disabled = true;
+            
+            try {
+                ws = new WebSocket(WS_URL);
+                
+                ws.onopen = () => {
+                    log('WebSocket connected successfully');
+                    connectionStatus.textContent = 'Connected';
+                    connectionIndicator.className = 'status-indicator connected';
+                    streamMessage.textContent = 'Waiting for frames...';
+                    disconnectBtn.disabled = false;
+                    startTime = Date.now();
+                    frameCount = 0;
+                    
+                    // Start uptime counter
+                    uptimeInterval = setInterval(updateUptime, 1000);
+                };
+                
+                ws.onmessage = (event) => {
+                    const msg = JSON.parse(event.data);
+                    
+                    if (msg.type === 'status') {
+                        log(`Stream status: ${msg.is_streaming ? 'Active' : 'Inactive'}, Buffer: ${msg.buffer_size} frames`);
+                        streamStatus.textContent = msg.is_streaming ? 'Active' : 'Inactive';
+                        bufferSizeElement.textContent = msg.buffer_size || 0;
+                        
+                    } else if (msg.type === 'frame') {
+                        // Show stream image, hide no-stream message
+                        streamImg.style.display = 'block';
+                        noStreamDiv.style.display = 'none';
+                        
+                        // Update image
+                        streamImg.src = `data:image/jpeg;base64,${msg.data}`;
+                        
+                        // Update stats
+                        frameCount++;
+                        frameCountElement.textContent = frameCount;
+                        
+                        // Calculate FPS
+                        const now = Date.now();
+                        if (lastFrameTime) {
+                            const timeDiff = (now - lastFrameTime) / 1000;
+                            const instantFps = 1 / timeDiff;
+                            fpsElement.textContent = instantFps.toFixed(1);
+                        }
+                        lastFrameTime = now;
+                        
+                        // Log every 100th frame
+                        if (frameCount % 100 === 0) {
+                            const avgFps = frameCount / ((now - startTime) / 1000);
+                            log(`Received ${frameCount} frames, Avg FPS: ${avgFps.toFixed(1)}`);
+                        }
+                        
+                    } else if (msg.type === 'stream_ended') {
+                        log('Stream ended by camera');
+                        streamStatus.textContent = 'Ended';
+                        streamMessage.textContent = 'Stream ended';
+                        streamImg.style.display = 'none';
+                        noStreamDiv.style.display = 'flex';
+                        
+                    } else if (msg.type === 'ping') {
+                        // Respond to keep-alive ping
+                        ws.send(JSON.stringify({ type: 'pong' }));
+                        
+                    } else {
+                        log(`Unknown message type: ${msg.type}`);
+                    }
+                };
+                
+                ws.onerror = (error) => {
+                    log(`WebSocket error: ${error.message || 'Unknown error'}`);
+                    connectionStatus.textContent = 'Error';
+                    connectionIndicator.className = 'status-indicator disconnected';
+                };
+                
+                ws.onclose = (event) => {
+                    log(`WebSocket closed: ${event.reason || 'No reason provided'} (Code: ${event.code})`);
+                    connectionStatus.textContent = 'Disconnected';
+                    connectionIndicator.className = 'status-indicator disconnected';
+                    streamStatus.textContent = 'Offline';
+                    streamMessage.textContent = 'Disconnected from stream';
+                    streamImg.style.display = 'none';
+                    noStreamDiv.style.display = 'flex';
+                    
+                    // Reset
+                    ws = null;
+                    connectBtn.disabled = false;
+                    disconnectBtn.disabled = true;
+                    
+                    // Stop uptime counter
+                    if (uptimeInterval) {
+                        clearInterval(uptimeInterval);
+                        uptimeInterval = null;
+                    }
+                };
+                
+            } catch (error) {
+                log(`Failed to create WebSocket: ${error.message}`);
+                connectBtn.disabled = false;
+            }
+        }
+        
+        function disconnect() {
+            if (ws) {
+                log('Disconnecting...');
+                ws.close();
+            }
+        }
+        
+        function clearLog() {
+            logDiv.innerHTML = '<div class="log-entry">Log cleared</div>';
+        }
+        
+        async function checkStatus() {
+            try {
+                log(`Checking status: ${STATUS_URL}`);
+                const response = await fetch(STATUS_URL);
+                const data = await response.json();
+                log(`Status: Streaming=${data.is_streaming}, Clients=${data.clients_connected}, Buffer=${data.buffer_size}`);
+                
+                // Update UI
+                streamStatus.textContent = data.is_streaming ? 'Active' : 'Inactive';
+                bufferSizeElement.textContent = data.buffer_size || 0;
+                
+            } catch (error) {
+                log(`Failed to check status: ${error.message}`);
+            }
+        }
+        
+        // Auto-connect on load
+        window.addEventListener('load', () => {
+            log('Page loaded, ready to connect');
+            // Uncomment to auto-connect:
+            // setTimeout(connect, 1000);
+        });
+        
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (ws) {
+                ws.close();
+            }
+        });
+    </script>
+</body>
+</html>
