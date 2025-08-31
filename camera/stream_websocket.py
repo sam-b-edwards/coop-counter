@@ -12,8 +12,8 @@ ID_FILE = '/home/sam/ID.txt'
 # WebSocket server URL
 SERVER_URL = "ws://coopcounter.comdevelopment.com/ws/stream/push"
 # Video stream configuration
-FRAME_WIDTH = 4608
-FRAME_HEIGHT = 2592
+FRAME_WIDTH = 2304
+FRAME_HEIGHT = 1296
 FPS = 10
 JPEG_QUALITY = 75
 
