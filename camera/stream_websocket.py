@@ -69,12 +69,12 @@ async def stream_to_server():
         try:
             print(f"Attempting to connect to {SERVER_URL}...")
 
-            # Connect to websocket with optimized timeouts
+            # Connect to websocket with balanced timeouts for stability and performance
             async with websockets.connect(
                 SERVER_URL,
-                ping_interval=5,
-                ping_timeout=2,
-                close_timeout=3
+                ping_interval=10,
+                ping_timeout=5,
+                close_timeout=5
             ) as websocket:
                 
                 print("Connected! Sending authentication...")
