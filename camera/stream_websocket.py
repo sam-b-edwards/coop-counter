@@ -5,7 +5,11 @@ import base64
 import json
 import os
 import time
+import warnings
 from picamera2 import Picamera2
+
+# Suppress libcamera warnings for cleaner output
+warnings.filterwarnings("ignore", category=RuntimeWarning)
 
 # Configuration constants
 ID_FILE = '/home/sam/ID.txt'
@@ -36,21 +40,32 @@ async def stream_to_server():
     print(f"Camera ID: {camera_id}")
     print(f"Connecting to server: {SERVER_URL}")
     
-    # Initialize camera
+    # Initialize camera with tuning for IMX708 NoIR sensor
     picam = Picamera2()
-    # Set camera configuration
+    
+    # Set camera configuration with proper buffer count and color space
     config = picam.create_video_configuration(
-        main={"size": (FRAME_WIDTH, FRAME_HEIGHT)}
+        main={"size": (FRAME_WIDTH, FRAME_HEIGHT), "format": "RGB888"},
+        buffer_count=4,  # Optimize buffer count for streaming
+        queue=True,
+        controls={
+            "NoiseReductionMode": 2,  # High quality noise reduction
+            "FrameDurationLimits": (100000, 100000),  # 10 FPS (in microseconds)
+        }
     )
     # Apply configuration to camera
     picam.configure(config)
     
-    # Set camera controls optimized for NoIR sensor
+    # Set camera controls optimized for NoIR sensor with better color correction
     controls = {
-        "Saturation": 1.3,
-        "Contrast": 1.25,
+        "Saturation": 1.4,  # Slightly increased for NoIR
+        "Contrast": 1.3,    # Better contrast for NoIR sensor
         "Brightness": 0.05,
         "Sharpness": 1.2,
+        "AwbMode": 0,       # Auto white balance
+        "AeEnable": True,   # Auto exposure enabled
+        "ExposureTime": 30000,  # Initial exposure time in microseconds
+        "AnalogueGain": 2.0,    # Moderate gain for low noise
     }
     # Apply controls to camera
     picam.set_controls(controls)
