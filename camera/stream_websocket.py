@@ -16,10 +16,12 @@ ID_FILE = '/home/sam/ID.txt'
 # WebSocket server URL
 SERVER_URL = "ws://coopcounter.comdevelopment.com/ws/stream/push"
 # Video stream configuration
-FRAME_WIDTH = 2304
-FRAME_HEIGHT = 1296
+# Reduced resolution for faster transmission
+FRAME_WIDTH = 1152
+FRAME_HEIGHT = 648
 FPS = 10
-JPEG_QUALITY = 75
+# Lower quality for smaller file sizes
+JPEG_QUALITY = 60 
 
 async def stream_to_server():
     """
