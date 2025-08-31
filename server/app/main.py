@@ -3,7 +3,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 import os
 from app.config import settings
-from app.routers import users, images, upload, auth
+from app.routers import users, images, upload, auth, stream
 
 # Create FastAPI app instance
 app = FastAPI()
@@ -32,3 +32,4 @@ app.include_router(auth.router, prefix="/auth", tags=["authentication"])
 app.include_router(upload.router, tags=["upload"])
 app.include_router(users.router, prefix="/user", tags=["users"])
 app.include_router(images.router, prefix="/user/images", tags=["images"])
+app.include_router(stream.router, prefix="/ws/stream", tags=["streaming"])
