@@ -56,16 +56,15 @@ async def stream_to_server():
     # Apply configuration to camera
     picam.configure(config)
     
-    # Set camera controls optimized for NoIR sensor with better color correction
+    # Set camera controls optimized for NoIR sensor with reduced brightness
     controls = {
-        "Saturation": 1.4,  # Slightly increased for NoIR
-        "Contrast": 1.3,    # Better contrast for NoIR sensor
-        "Brightness": 0.05,
-        "Sharpness": 1.2,
-        "AwbMode": 0,       # Auto white balance
-        "AeEnable": True,   # Auto exposure enabled
-        "ExposureTime": 30000,  # Initial exposure time in microseconds
-        "AnalogueGain": 2.0,    # Moderate gain for low noise
+        "Saturation": 1.2,      # Moderate saturation for NoIR
+        "Contrast": 1.15,       # Slightly enhanced contrast
+        "Brightness": -0.1,     # Reduced brightness to compensate for NoIR sensitivity
+        "Sharpness": 1.1,       # Moderate sharpness
+        "AwbMode": 0,           # Auto white balance
+        "ExposureTime": 15000,  # Reduced exposure time (15ms) to prevent overexposure
+        "AnalogueGain": 1.0,    # Lower gain to reduce brightness
     }
     # Apply controls to camera
     picam.set_controls(controls)
