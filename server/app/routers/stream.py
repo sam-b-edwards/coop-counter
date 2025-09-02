@@ -70,6 +70,9 @@ async def camera_push_stream(websocket: WebSocket):
             "message": "Camera authenticated successfully"
         }))
 
+        # Debug: Log successful authentication
+        print(f"Camera {camera_id} authenticated successfully, starting stream handler")
+
         # Handle camera stream
         await streaming.handle_camera_connection(websocket, camera_id)
 

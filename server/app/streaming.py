@@ -65,6 +65,10 @@ async def handle_camera_connection(websocket: WebSocket, camera_id: str):
             # Parse json message
             message = json.loads(data)
 
+            # Debug: Log ANY message received
+            if message.get("frame_number", 0) % 50 == 0 or message["type"] != "frame":
+                print(f"Camera {camera_id} received message type: {message.get('type', 'unknown')}, frame_number: {message.get('frame_number', 'N/A')}")
+
             # Check if message is a frame type
             if message["type"] == "frame":
                 # Update stream info with new frame data
