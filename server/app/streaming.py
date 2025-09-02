@@ -77,6 +77,11 @@ async def handle_camera_connection(websocket: WebSocket, camera_id: str):
                     "frame_number": message.get("frame_number", 0)
                 }
 
+                # Debug: Log frame reception
+                # log every 50 frames
+                if frame_data.get("frame_number", 0) % 50 == 0:
+                    print(f"Camera {camera_id} received frame {frame_data.get('frame_number', 'unknown')}, buffer size: {len(stream['frames'])}, clients: {len(stream['clients'])}")
+
                 # append frame data to circular buffer
                 stream["frames"].append(frame_data)
 
@@ -209,6 +214,9 @@ async def broadcast_to_clients(camera_id: str, frame_data: dict):
     # Skip if no clients are connected
     if not clients:
         return
+
+    # Debug: Log broadcasting attempt
+    print(f"Broadcasting frame {frame_data.get('frame_number', 'unknown')} to {len(clients)} clients for camera {camera_id}")
 
     # Prepare the message in json format
     message = json.dumps({

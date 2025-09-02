@@ -1,0 +1,19 @@
+[Unit]
+Description=Coop Camera WebSocket Streaming Service
+After=network.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=sam
+Group=sam
+WorkingDirectory=/home/sam/counting-chickens/camera
+Environment="PYTHONUNBUFFERED=1"
+ExecStart=/usr/bin/python3 /home/sam/counting-chickens/camera/stream_websocket.py
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
