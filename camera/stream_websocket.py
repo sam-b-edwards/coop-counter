@@ -5,23 +5,17 @@ import base64
 import json
 import os
 import time
-import warnings
 from picamera2 import Picamera2
-
-# Suppress libcamera warnings for cleaner output
-warnings.filterwarnings("ignore", category=RuntimeWarning)
 
 # Configuration constants
 ID_FILE = '/home/sam/ID.txt'
 # WebSocket server URL
 SERVER_URL = "ws://coopcounter.comdevelopment.com/ws/stream/push"
 # Video stream configuration
-# Reduced resolution for faster transmission
-FRAME_WIDTH = 1152
-FRAME_HEIGHT = 648
+FRAME_WIDTH = 2304
+FRAME_HEIGHT = 1296
 FPS = 10
-# Lower quality for smaller file sizes
-JPEG_QUALITY = 60 
+JPEG_QUALITY = 75
 
 async def stream_to_server():
     """
@@ -42,31 +36,21 @@ async def stream_to_server():
     print(f"Camera ID: {camera_id}")
     print(f"Connecting to server: {SERVER_URL}")
     
-    # Initialize camera with tuning for IMX708 NoIR sensor
+    # Initialize camera
     picam = Picamera2()
-    
-    # Set camera configuration with proper buffer count and color space
+    # Set camera configuration
     config = picam.create_video_configuration(
-        main={"size": (FRAME_WIDTH, FRAME_HEIGHT), "format": "RGB888"},
-        buffer_count=4,  # Optimize buffer count for streaming
-        queue=True,
-        controls={
-            "NoiseReductionMode": 2,  # High quality noise reduction
-            "FrameDurationLimits": (100000, 100000),  # 10 FPS (in microseconds)
-        }
+        main={"size": (FRAME_WIDTH, FRAME_HEIGHT)}
     )
     # Apply configuration to camera
     picam.configure(config)
     
-    # Set camera controls optimized for NoIR sensor with reduced brightness
+    # Set camera controls optimized for NoIR sensor
     controls = {
-        "Saturation": 1.2,      # Moderate saturation for NoIR
-        "Contrast": 1.15,       # Slightly enhanced contrast
-        "Brightness": -0.1,     # Reduced brightness to compensate for NoIR sensitivity
-        "Sharpness": 1.1,       # Moderate sharpness
-        "AwbMode": 0,           # Auto white balance
-        "ExposureTime": 15000,  # Reduced exposure time (15ms) to prevent overexposure
-        "AnalogueGain": 1.0,    # Lower gain to reduce brightness
+        "Saturation": 1.3,
+        "Contrast": 1.25,
+        "Brightness": 0.05,
+        "Sharpness": 1.2,
     }
     # Apply controls to camera
     picam.set_controls(controls)
@@ -85,12 +69,11 @@ async def stream_to_server():
         try:
             print(f"Attempting to connect to {SERVER_URL}...")
 
-            # Connect to websocket with balanced timeouts for stability and performance
+            # Connect to websocket
             async with websockets.connect(
                 SERVER_URL,
                 ping_interval=10,
-                ping_timeout=5,
-                close_timeout=5
+                ping_timeout=5
             ) as websocket:
                 
                 print("Connected! Sending authentication...")
@@ -124,6 +107,21 @@ async def stream_to_server():
 
                 # loops to stream frames continuously
                 while True:
+                    # try and expects to receive ping and send pong back and handle errors
+                    try:
+                        message = await asyncio.wait_for(websocket.recv(), timeout=0.001)
+                        msg_data = json.loads(message)
+                        if msg_data.get("type") == "ping":
+                            await websocket.send(json.dumps({"type": "pong"}))
+                    # handle timeout errors
+                    except asyncio.TimeoutError:
+                        # No message received, continue
+                        pass
+                    # handle other errors
+                    except:
+                        # Ignore other errors, continue
+                        pass
+                    
                     # Frame timing start
                     frame_start = time.time()
                     
