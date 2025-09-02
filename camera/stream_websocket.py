@@ -36,21 +36,36 @@ async def stream_to_server():
     print(f"Camera ID: {camera_id}")
     print(f"Connecting to server: {SERVER_URL}")
     
-    # Initialize camera
+    # Initialize camera with tuning for IMX708 NoIR sensor
     picam = Picamera2()
-    # Set camera configuration
+    
+    # Set camera configuration with noise reduction
     config = picam.create_video_configuration(
-        main={"size": (FRAME_WIDTH, FRAME_HEIGHT)}
+        main={"size": (FRAME_WIDTH, FRAME_HEIGHT)},
+        controls={
+            # High quality noise reduction
+            "NoiseReductionMode": 2,
+        }
     )
     # Apply configuration to camera
     picam.configure(config)
     
-    # Set camera controls optimized for NoIR sensor
+    # Set camera controls optimized for NoIR sensor with enhanced tuning
     controls = {
-        "Saturation": 1.3,
-        "Contrast": 1.25,
-        "Brightness": 0.05,
-        "Sharpness": 1.2,
+        # Moderate saturation for NoIR
+        "Saturation": 1.2,
+        # Slightly enhanced contrast
+        "Contrast": 1.15,
+        # Reduced brightness to compensate for NoIR sensitivity
+        "Brightness": -0.1,
+        # Moderate sharpness
+        "Sharpness": 1.1,
+        # Auto white balance
+        "AwbMode": 0,
+        # Fixed exposure time (15ms) to prevent overexposure
+        "ExposureTime": 15000,
+        # Lower gain to reduce brightness
+        "AnalogueGain": 1.0,
     }
     # Apply controls to camera
     picam.set_controls(controls)
@@ -69,11 +84,12 @@ async def stream_to_server():
         try:
             print(f"Attempting to connect to {SERVER_URL}...")
 
-            # Connect to websocket
+            # Connect to websocket with balanced timeouts for stability and performance
             async with websockets.connect(
                 SERVER_URL,
                 ping_interval=10,
-                ping_timeout=5
+                ping_timeout=5,
+                close_timeout=5
             ) as websocket:
                 
                 print("Connected! Sending authentication...")
