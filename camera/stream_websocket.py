@@ -19,7 +19,7 @@ UPLOAD_URL = "http://coopcounter.comdevelopment.com/upload"
 FRAME_WIDTH = 2304
 FRAME_HEIGHT = 1296
 FPS = 10
-JPEG_QUALITY = 75
+JPEG_QUALITY = 60
 # Capture interval in seconds (5 minutes = 300 seconds)
 CAPTURE_INTERVAL = 300
 
@@ -93,19 +93,19 @@ async def stream_to_server():
     # Set camera controls optimized for NoIR sensor with enhanced tuning
     controls = {
         # Moderate saturation for NoIR
-        "Saturation": 1.2,
+        "Saturation": 1.3,
         # Slightly enhanced contrast
-        "Contrast": 1.15,
+        "Contrast": 1.25,
         # Reduced brightness to compensate for NoIR sensitivity
-        "Brightness": -0.1,
+        "Brightness": 0.05,
         # Moderate sharpness
-        "Sharpness": 1.1,
+        "Sharpness": 1.2,
         # Auto white balance
-        "AwbMode": 0,
+        #"AwbMode": 0,
         # Fixed exposure time (15ms) to prevent overexposure
-        "ExposureTime": 15000,
+        #"ExposureTime": 15000,
         # Lower gain to reduce brightness
-        "AnalogueGain": 1.0,
+        #"AnalogueGain": 1.0,
     }
     # Apply controls to camera
     picam.set_controls(controls)
