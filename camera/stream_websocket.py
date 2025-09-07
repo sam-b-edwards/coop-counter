@@ -93,9 +93,9 @@ async def stream_to_server():
     # Set camera controls optimized for NoIR sensor with enhanced tuning
     controls = {
         # Moderate saturation for NoIR
-        "Saturation": 1.3,
+        #"Saturation": 1.3,
         # Slightly enhanced contrast
-        "Contrast": 1.25,
+        #"Contrast": 1.25,
         # Reduced brightness to compensate for NoIR sensitivity
         "Brightness": 0.05,
         # Moderate sharpness
