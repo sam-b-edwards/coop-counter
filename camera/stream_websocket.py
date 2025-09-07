@@ -48,6 +48,7 @@ def capture_and_upload_image(frame, camera_id):
                     data={"camera_id": camera_id},
                     timeout=10
                 )
+                print("Uploaded frame to server successfully")
                 print("Uploaded Server response:", response.json())
         # handle error response
         except Exception as upload_error:
