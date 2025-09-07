@@ -97,7 +97,7 @@ async def stream_to_server():
         # Slightly enhanced contrast
         #"Contrast": 1.25,
         # Reduced brightness to compensate for NoIR sensitivity
-        "Brightness": 1,
+        "Brightness": 0.03,
         # Moderate sharpness
         "Sharpness": 1.2,
         # Auto white balance
