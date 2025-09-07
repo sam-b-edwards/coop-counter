@@ -17,8 +17,8 @@ SERVER_URL = "ws://coopcounter.comdevelopment.com/ws/stream/push"
 UPLOAD_URL = "http://coopcounter.comdevelopment.com/upload"
 # Video stream configuration
 # Reduced resolution for more stable streaming (half resolution)
-FRAME_WIDTH = 1152
-FRAME_HEIGHT = 648
+FRAME_WIDTH = 2304
+FRAME_HEIGHT = 1296
 FPS = 10
 # Lower quality for faster transmission
 JPEG_QUALITY = 50
