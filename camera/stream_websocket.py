@@ -5,17 +5,56 @@ import base64
 import json
 import os
 import time
+import requests
+from datetime import datetime
 from picamera2 import Picamera2
 
 # Configuration constants
 ID_FILE = '/home/sam/ID.txt'
 # WebSocket server URL
 SERVER_URL = "ws://coopcounter.comdevelopment.com/ws/stream/push"
+# Upload endpoint
+UPLOAD_URL = "http://coopcounter.comdevelopment.com/upload"
 # Video stream configuration
 FRAME_WIDTH = 2304
 FRAME_HEIGHT = 1296
 FPS = 10
 JPEG_QUALITY = 75
+# Capture interval in seconds (5 minutes = 300 seconds)
+CAPTURE_INTERVAL = 300
+
+def capture_and_upload_image(frame, camera_id):
+    """
+    Capture current frame and upload to server
+    """
+    try:
+        # Create a temporary file for the captured image
+        filename = "/tmp/capture.jpg"
+        
+        # Encode frame as JPEG
+        _, buffer = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 90])
+
+        # Save to temporary file
+        with open(filename, 'wb') as f:
+            f.write(buffer)
+        print("Image captured.")
+
+        # try and expects to upload frame via API and handle response
+        try:
+            with open(filename, "rb") as f:
+                response = requests.post(
+                    UPLOAD_URL, 
+                    files={"file": f}, 
+                    data={"camera_id": camera_id},
+                    timeout=10
+                )
+                print("Uploaded Server response:", response.json())
+        # handle error response
+        except Exception as upload_error:
+            print(f"Upload error: {upload_error}")
+    # handle unexpected errors
+    except Exception as error:
+        print(f"Capture error: {error}")
 
 async def stream_to_server():
     """
@@ -120,6 +159,7 @@ async def stream_to_server():
                 # Initialize frame count and start time
                 frame_count = 0
                 start_time = time.time()
+                last_capture_time = time.time()
 
                 # loops to stream frames continuously
                 while True:
@@ -143,6 +183,17 @@ async def stream_to_server():
                     
                     # Capture frame
                     frame = picam.capture_array()
+                    
+                    # Check if it's time to capture and upload an image every 5 mins
+                    current_time = time.time()
+                    # if statement to check if 5 mins have passed by comparing current_time and last_capture_time is greater than or equal to CAPTURE_INTERVAL
+                    if current_time - last_capture_time >= CAPTURE_INTERVAL:
+                        # Print capturing message
+                        print(f"Capturing scheduled image at frame {frame_count}")
+                        # Capture and upload image
+                        capture_and_upload_image(frame, camera_id)
+                        # Update last capture time
+                        last_capture_time = current_time
                     
                     # Encode frame as JPEG
                     _, buffer = cv2.imencode(
