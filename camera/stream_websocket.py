@@ -16,7 +16,6 @@ SERVER_URL = "ws://coopcounter.comdevelopment.com/ws/stream/push"
 # Upload endpoint
 UPLOAD_URL = "http://coopcounter.comdevelopment.com/upload"
 # Video stream configuration
-# Reduced resolution for more stable streaming (half resolution)
 FRAME_WIDTH = 2304
 FRAME_HEIGHT = 1296
 FPS = 10
@@ -97,15 +96,13 @@ async def stream_to_server_with_camera(picam, camera_id):
         try:
             print(f"Attempting to connect to {SERVER_URL}...")
 
-            # Connect to websocket with more tolerant timeouts for slow connections
+            # Connect to websocket with very tolerant timeouts for full resolution
             async with websockets.connect(
                 SERVER_URL,
-                # Increased from 10 to give more time between pings
-                ping_interval=20,
-                # Increased from 5 to allow slower responses
-                ping_timeout=10,
-                # Increased for better stability
+                ping_interval=30,  # 30 seconds between pings for large frames
+                ping_timeout=20,   # 20 seconds timeout for slow uploads
                 close_timeout=10,
+                max_size=20 * 1024 * 1024  # 20MB max message size
             ) as websocket:
                 
                 print("Connected! Sending authentication...")
@@ -243,8 +240,10 @@ async def main():
 
     # camera controls
     controls = {
-        "Brightness": 0.03,
-        "Sharpness": 1.2,
+        "Saturation": 1.8,
+        "Contrast": 1.3,
+        "Brightness": 0.0,
+        "Sharpness": 1.4,
     }
     # set camera controls
     picam.set_controls(controls)
