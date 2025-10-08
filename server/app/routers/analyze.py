@@ -90,10 +90,10 @@ async def predict(user_id: str = Form(...), file: UploadFile = File(...)):
             "success": True,
             "chicken_count": count,
             "confidence": round(avg_conf * 100),
-            "image upload url": f"{settings.BASE_URL}/uploads/{filename}",
-            "image predicted url": f"{settings.BASE_URL}/output/{filename}",
+            "image_upload_url": f"{settings.BASE_URL}/uploads/{filename}",
+            "image_predicted_url": f"{settings.BASE_URL}/output/{filename}",
             "image_id": image_id,
-            "timestamp": timestamp
+            "timestamp": timestamp.isoformat()
         }
 
         return JSONResponse(content=response_data)
