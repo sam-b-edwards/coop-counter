@@ -49,7 +49,7 @@ for row in rows:
     print(f"Predicting image: {image_filename}")
     results = model.predict(
         source=image_path,
-        conf=0.1,
+        conf=0.2,
         save=True,
         project=f"{BASE_DIR}/runs/detect",
         name="predict",
