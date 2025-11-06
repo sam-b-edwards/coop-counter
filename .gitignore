@@ -3,7 +3,6 @@ working/
 test/
 tests/
 experiments/
-docs/
 
 # Claude Code
 .claude/
