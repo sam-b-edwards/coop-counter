@@ -54,101 +54,143 @@ npx expo start
 
 The demo mode shows mock data so you can explore all the UI features!
 
-## Full Setup
+## System Components
+
+The Coop Counter system consists of four main components:
+
+### 1. Camera (Raspberry Pi)
+- Captures images every 5 minutes
+- Streams live video via WebSocket
+- Runs 24/7 with PoE power
+
+### 2. Backend Server (FastAPI)
+- Processes images with YOLO model
+- Handles WebSocket connections
+- Manages API endpoints
+- Runs prediction scripts
+
+### 3. Database (MySQL/MariaDB)
+- Stores user accounts
+- Saves chicken count history
+- Tracks predictions and timestamps
+
+### 4. Frontend (React Native)
+- Mobile app for iOS/Android
+- Real-time monitoring dashboard
+- Live camera streaming view
+- Demo mode for testing
+
+## Setup Instructions
 
 ### Prerequisites
 
-- Node.js 18+ and npm
-- Python 3.9+
-- MySQL 8.0+ (database setup coming soon)
-- Expo CLI (`npm install -g expo-cli`)
-- Expo Go app on your phone for testing
+- **For Backend**: Python 3.9+, pip
+- **For Frontend**: Node.js 18+, npm, Expo CLI
+- **For Database**: MySQL 8.0+ or MariaDB 10.6+
+- **For Camera**: Raspberry Pi, Camera Module, PoE HAT (optional)
 
-### Backend Setup
+### 1. Database Setup
 
-1. Navigate to the backend directory:
+1. **Install MySQL/MariaDB** on your server or local machine
+
+2. **Create the database:**
+```bash
+mysql -u root -p
+```
+```sql
+CREATE DATABASE coopcounter;
+USE coopcounter;
+```
+
+3. **Import the schema:**
+```bash
+mysql -u your_username -p coopcounter < database/schema.sql
+```
+
+4. **Verify tables were created:**
+```sql
+SHOW TABLES;
+```
+
+### 2. Backend Server Setup
+
+1. **Navigate to backend directory:**
 ```bash
 cd backend
 ```
 
-2. Create a Python virtual environment:
+2. **Create Python virtual environment:**
 ```bash
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 
-3. Install Python dependencies:
+3. **Install dependencies:**
 ```bash
 pip install -r requirements.txt
 ```
 
-4. Create a `.env` file from the example:
+4. **Configure environment:**
 ```bash
 cp .env.example .env
+# Edit .env with your database credentials and settings
 ```
 
-5. Edit `.env` with your configuration:
-```env
-# Database Configuration
-DB_HOST=localhost
-DB_USER=your_mysql_user
-DB_PASSWORD=your_mysql_password
-DB_NAME=coopcounter
-
-# API Configuration
-BASE_URL=http://localhost:8000
-
-# Model Configuration
-MODEL_PATH=./best.pt
-CONFIDENCE_THRESHOLD=0.2
-DETECTION_CLASS=Boiler-Chicken
-```
-
-6. Start the API server:
+5. **Start the API server:**
 ```bash
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 The API will be available at `http://localhost:8000`
 
-### Frontend Setup
+### 3. Frontend Mobile App Setup
 
-1. Navigate to the frontend directory:
+1. **Navigate to frontend directory:**
 ```bash
 cd frontend/coopCounterv2
 ```
 
-2. Install dependencies:
+2. **Install dependencies:**
 ```bash
 npm install --legacy-peer-deps
 ```
-*Note: We use `--legacy-peer-deps` due to specific package version requirements*
 
-3. Create a `.env` file from the example:
+3. **Configure environment:**
 ```bash
 cp .env.example .env
+# Edit .env with your API URL and camera ID
 ```
 
-4. Edit `.env` with your configuration:
-```env
-# API Configuration
-EXPO_PUBLIC_API_URL=http://localhost:8000
-EXPO_PUBLIC_WS_URL=ws://localhost:8000
-
-# Camera Configuration (if you have a camera setup)
-EXPO_PUBLIC_CAMERA_ID=your-camera-id
-```
-
-5. Start the Expo development server:
+4. **Start Expo development server:**
 ```bash
 npx expo start
 ```
 
-6. Run on your device:
-   - **iOS**: Scan the QR code with your iPhone camera
-   - **Android**: Scan the QR code with the Expo Go app
-   - **iOS Simulator**: Press `i` in the terminal
-   - **Android Emulator**: Press `a` in the terminal
+5. **Run on device:**
+   - **iOS**: Scan QR code with Camera app
+   - **Android**: Scan QR code in Expo Go app
+
+### 4. Camera Setup (Raspberry Pi)
+
+1. **Hardware setup:**
+   - Connect Pi Camera Module to CSI port
+   - Install PoE HAT (recommended) or use standard power
+   - Connect Ethernet cable
+
+2. **Software setup on Raspberry Pi:**
+```bash
+cd camera
+pip install -r requirements.txt
+```
+
+3. **Configure camera ID in environment**
+
+4. **Run streaming script:**
+```bash
+python stream_websocket.py
+```
+
+The camera will start streaming to your backend server
 
 ## API Endpoints
 
@@ -167,31 +209,15 @@ python predict.py
 
 ## Architecture Notes
 
-### Camera System
+### Single Camera, Multiple Users
 The current implementation uses a single shared camera for all users. While the database schema supports individual camera IDs per user (for future expansion), the current version streams from one camera configured via `EXPO_PUBLIC_CAMERA_ID` in the environment variables. All users view the same camera feed.
 
-## Camera Setup (Raspberry Pi)
-
-The camera is the main data source for the backend. The recommended setup uses:
-
-### Hardware
-- **Raspberry Pi** (any model with network capability)
-- **Pi Camera Module** (connected via CSI ribbon cable)
-- **Power over Ethernet (PoE)** HAT or splitter
-
-### Why PoE?
-Using Power over Ethernet provides both network connectivity and power through a single cable from your router. This setup is more reliable than battery + WiFi as it:
+### Why Power over Ethernet?
+The Raspberry Pi camera uses PoE for reliability:
+- Single cable provides both network and power
 - Runs continuously without recharging
-- Eliminates wireless connection drops
-- Simplifies installation (one cable for everything)
-
-### Camera Software
-The `camera/` directory contains the Python script for streaming video from the Raspberry Pi:
-1. Install the camera dependencies on your Raspberry Pi
-2. Configure the camera ID in your environment
-3. Run the streaming script to start sending frames to the backend
-
-For detailed camera setup instructions, see the camera directory README.
+- No WiFi connection drops
+- Simpler installation and maintenance
 
 ## Technologies Used
 
@@ -213,6 +239,10 @@ For detailed camera setup instructions, see the camera directory README.
 
 The app uses a YOLOv8 model trained specifically for chicken detection. The model weights (`best.pt`) are included in the repository and detect "Boiler-Chicken" class with a default confidence threshold of 0.2.
 
+## Contributing
+
+This was developed as a school project. The frontend was worked on by my friend [@kaelangraham](https://github.com/kaelangraham).
+
 ## Troubleshooting
 
 ### Expo SDK Version Mismatch
@@ -229,53 +259,9 @@ If you encounter peer dependency conflicts, always use:
 npm install --legacy-peer-deps
 ```
 
-## Contributing
-
-This was developed as a school project. The frontend was worked on by my friend [@kaelangraham](https://github.com/kaelangraham).
-
-## Database Setup
-
-### Prerequisites
-- MySQL 8.0+ or MariaDB 10.6+
-- A MySQL user with CREATE and INSERT privileges
-
-### Setup Instructions
-
-1. **Log into MySQL:**
-```bash
-mysql -u root -p
-```
-
-2. **Create the database:**
-```sql
-CREATE DATABASE coopcounter;
-USE coopcounter;
-```
-
-3. **Import the schema:**
-```bash
-mysql -u your_username -p coopcounter < database/schema.sql
-```
-
-4. **Verify the tables were created:**
-```sql
-SHOW TABLES;
-```
-You should see:
-- `users` - User accounts with camera assignments
-- `images` - Uploaded images with AI predictions and chicken counts
-
-5. **Create a test user (optional):**
-```sql
-INSERT INTO users (email, password, name, cameraId, totalChickens)
-VALUES ('test@example.com', 'hashed_password_here', 'Test User', 'camera-001', 50);
-```
-
-**Note:** Passwords should be hashed using bcrypt before storing. The backend handles this automatically during user registration.
-
 ## License
 
-This project is open source and free for anyone to use.
+MIT License - see [LICENSE](LICENSE) file for details.
 
 ## Acknowledgments
 
