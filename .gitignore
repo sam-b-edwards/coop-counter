@@ -1,0 +1,38 @@
+# Development/Testing folders
+working/
+test/
+tests/
+experiments/
+
+# Claude Code
+.claude/
+
+# OS files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Editor/IDE
+.vscode/
+.idea/
+*.sublime-*
+
+# Logs
+*.log
+logs/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environment files
+.env
+.env.local
+
+# Temporary files
+*.tmp
+.cache/
+temp/
