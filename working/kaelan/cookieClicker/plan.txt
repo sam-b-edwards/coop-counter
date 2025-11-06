@@ -1,9 +1,0 @@
-Main Page - Clicker
-
-There will be a cookie in the middle of the phone with text above it displaying current cookie count, as well as cookies per second. 
-
-Second Page - Shop
-Items -
-Increased click power
-Click powerups
-Auto cookie production
