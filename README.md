@@ -1,8 +1,8 @@
 # Coop Counter 🐔
 
-An AI-powered chicken counting application that uses computer vision to automatically count chickens in your coop. Monitor your flock with real-time camera streaming and automated daily scans.
+An AI-powered monitoring system that automatically detects and counts chickens inside a backyard coop using a YOLO object detection model. Built with a Raspberry Pi camera module that captures images every five minutes and streams live video via WebSocket to a FastAPI backend server for real-time flock monitoring.
 
-This was developed as a school project in collaboration with [@kaelangraham](https://github.com/kaelangraham), who worked on the frontend mobile application.
+This was developed as a school project in collaboration with [@kaelangraham](https://github.com/kaelangraham), who developed the React Native mobile application.
 
 ## Features
 
@@ -169,6 +169,29 @@ python predict.py
 
 ### Camera System
 The current implementation uses a single shared camera for all users. While the database schema supports individual camera IDs per user (for future expansion), the current version streams from one camera configured via `EXPO_PUBLIC_CAMERA_ID` in the environment variables. All users view the same camera feed.
+
+## Camera Setup (Raspberry Pi)
+
+The camera is the main data source for the backend. The recommended setup uses:
+
+### Hardware
+- **Raspberry Pi** (any model with network capability)
+- **Pi Camera Module** (connected via CSI ribbon cable)
+- **Power over Ethernet (PoE)** HAT or splitter
+
+### Why PoE?
+Using Power over Ethernet provides both network connectivity and power through a single cable from your router. This setup is more reliable than battery + WiFi as it:
+- Runs continuously without recharging
+- Eliminates wireless connection drops
+- Simplifies installation (one cable for everything)
+
+### Camera Software
+The `camera/` directory contains the Python script for streaming video from the Raspberry Pi:
+1. Install the camera dependencies on your Raspberry Pi
+2. Configure the camera ID in your environment
+3. Run the streaming script to start sending frames to the backend
+
+For detailed camera setup instructions, see the camera directory README.
 
 ## Technologies Used
 
