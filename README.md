@@ -7,25 +7,28 @@ This was developed as a school project in collaboration with [@kaelangraham](htt
 ## Screenshots
 
 ### Mobile App Dashboard
-<img src="docs/images/frontpage.png" width="300" alt="Dashboard showing chicken count">
+<img src="https://i.imgur.com/MgqsJTF.png" width="300" alt="Dashboard showing chicken count">
 
 *Main dashboard displaying current count (42/50), AI certainty (87%), and automated door control*
 
 ### Analytics & Reports
-<img src="docs/images/statspage.png" width="300" alt="Analytics page with graphs">
+<img src="https://i.imgur.com/QFNkNcC.png" width="300" alt="Analytics page with graphs">
 
-*Weekly reports showing chicken activity patterns throughout the day*
+*Weekly and daily reports showing chicken activity patterns and hourly trends*
 
 ### AI Detection in Action
-![YOLO Detection](docs/images/INCOOP.png)
+<img src="https://i.imgur.com/mePIeeH.png" width="600" alt="YOLO Detection">
+
 *YOLO model detecting chickens in low-light conditions with bounding boxes and confidence scores*
 
 ### System Architecture
-![Architecture Diagram](docs/images/diagram.png)
+<img src="https://i.imgur.com/YinAYW3.png" width="700" alt="Architecture Diagram">
+
 *Complete data flow from Raspberry Pi camera through FastAPI backend to YOLO processing*
 
 ### Hardware Setup
-![Camera Installation](docs/images/camera.png)
+<img src="https://i.imgur.com/3GoOJgh.png" width="500" alt="Camera Installation">
+
 *Raspberry Pi camera module mounted in the coop for 24/7 monitoring*
 
 ## Features

@@ -85,7 +85,7 @@ export default function analytics() {
     }, [hourlyData])
   return hourlyData ? (
     <View className='px-4 pt-4 bg-white'>
-        <Text className='text-2xl self-center font-bold tracking-wide mb-6'>Weekly Reports</Text>
+        <Text className='text-2xl self-center font-bold tracking-wide mb-6'>Daily Report</Text>
         <Text className='text-xl font-semibold mb-2'>{hourlyData[selectedIndex]?.date || 'Today'}</Text>
         <View className='flex flex-row gap-4'>
             <View>
