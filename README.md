@@ -25,12 +25,16 @@ counting-chickens/
 │   └── predict.py     # Batch prediction script
 ├── database/          # Database schema
 │   └── schema.sql     # MySQL/MariaDB table structure
-└── camera/            # Camera streaming service (optional)
+└── camera/            # Raspberry Pi camera scripts
+    ├── stream_websocket.py  # Current async script (captures + streams)
+    ├── send_image.py       # Old: image capture only
+    ├── stream.py           # Old: streaming test script
+    └── view_stream.html    # Debug viewer for WebSocket stream
 ```
 
-## Quick Start - Demo Mode
+## Quick Start - Demo Mode (App Only)
 
-Want to see the app in action without setting up the backend? Use our demo account:
+To quickly try the mobile app without backend setup, use the demo account:
 
 1. Clone the repository:
 ```bash
@@ -201,7 +205,14 @@ The camera will start streaming to your backend server
 - `WS /ws/stream/watch/{camera_id}` - WebSocket camera streaming
 
 ### Batch Processing
-The `predict.py` script can be run separately to process images in batch:
+The `predict.py` script runs on the server via cron job to process captured images automatically:
+
+**Example cron job (runs every 2 minutes):**
+```bash
+*/2 * * * * /home/sam/counting-chickens/server/predict.py >> /home/sam/predict.log 2>&1
+```
+
+To run manually:
 ```bash
 cd backend
 python predict.py
