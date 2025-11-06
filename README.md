@@ -19,7 +19,7 @@ This was developed as a school project in collaboration with [@kaelangraham](htt
 ### AI Detection in Action
 <img src="docs/images/INCOOP.png" width="600" alt="YOLO Detection">
 
-*YOLO model detecting chickens in low-light conditions with bounding boxes and confidence scores*
+*YOLO model detecting chickens with bounding boxes and confidence scores*
 
 ### System Architecture
 <img src="docs/images/diagram.png" width="700" alt="Architecture Diagram">
