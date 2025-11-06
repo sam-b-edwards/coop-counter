@@ -4,6 +4,30 @@ An AI-powered monitoring system that automatically detects and counts chickens i
 
 This was developed as a school project in collaboration with [@kaelangraham](https://github.com/kaelangraham), who developed the React Native mobile application.
 
+## Screenshots
+
+### Mobile App Dashboard
+<img src="docs/images/frontpage.png" width="300" alt="Dashboard showing chicken count">
+
+*Main dashboard displaying current count (42/50), AI certainty (87%), and automated door control*
+
+### Analytics & Reports
+<img src="docs/images/statspage.png" width="300" alt="Analytics page with graphs">
+
+*Weekly reports showing chicken activity patterns throughout the day*
+
+### AI Detection in Action
+![YOLO Detection](docs/images/INCOOP.png)
+*YOLO model detecting chickens in low-light conditions with bounding boxes and confidence scores*
+
+### System Architecture
+![Architecture Diagram](docs/images/diagram.png)
+*Complete data flow from Raspberry Pi camera through FastAPI backend to YOLO processing*
+
+### Hardware Setup
+![Camera Installation](docs/images/camera.png)
+*Raspberry Pi camera module mounted in the coop for 24/7 monitoring*
+
 ## Features
 
 - **AI-Powered Counting**: Uses YOLO object detection to accurately count chickens
