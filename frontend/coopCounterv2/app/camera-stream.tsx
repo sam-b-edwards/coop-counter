@@ -6,6 +6,7 @@ import * as ScreenOrientation from 'expo-screen-orientation'
 import { WebView } from 'react-native-webview'
 import * as SecureStore from 'expo-secure-store'
 import { isDemoUser } from '@/utils/demoData'
+import { CAMERA_ID } from '@/config'
 
 export default function CameraStream() {
     const router = useRouter()
@@ -14,7 +15,6 @@ export default function CameraStream() {
     const webViewRef = useRef(null)
 
     // WebSocket configuration
-    const CAMERA_ID = '1009'
     const WEBSOCKET_URL = `ws://coopcounter.comdevelopment.com/ws/stream/watch/${CAMERA_ID}?user_id=${userId}`
     const IS_DEMO = isDemoUser(userId)
 

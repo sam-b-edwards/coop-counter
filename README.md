@@ -2,6 +2,8 @@
 
 An AI-powered chicken counting application that uses computer vision to automatically count chickens in your coop. Monitor your flock with real-time camera streaming and automated daily scans.
 
+This was developed as a school project in collaboration with [@kaelangraham](https://github.com/kaelangraham), who worked on the frontend mobile application.
+
 ## Features
 
 - **AI-Powered Counting**: Uses YOLO object detection to accurately count chickens
@@ -162,6 +164,11 @@ The `predict.py` script can be run separately to process images in batch:
 cd backend
 python predict.py
 ```
+
+## Architecture Notes
+
+### Camera System
+The current implementation uses a single shared camera for all users. While the database schema supports individual camera IDs per user (for future expansion), the current version streams from one camera configured via `EXPO_PUBLIC_CAMERA_ID` in the environment variables. All users view the same camera feed.
 
 ## Technologies Used
 
