@@ -65,7 +65,7 @@ To quickly try the mobile app without backend setup, use the demo account:
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/counting-chickens.git
+git clone https://github.com/sam-b-edwards/counting-chickens.git
 cd counting-chickens/frontend/coopCounterv2
 ```
 
